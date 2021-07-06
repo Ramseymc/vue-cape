@@ -22,6 +22,13 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "salesstart" */ "../views/SalesStart.vue"),
   },
+  {
+    // step 2 of process - capture client info
+    path: "/salesinfo",
+    name: "salesinfo",
+    component: () =>
+      import(/* webpackChunkName: "salesinfo" */ "../views/SalesInfo.vue"),
+  },
 ];
 
 const router = new VueRouter({

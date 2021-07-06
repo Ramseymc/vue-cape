@@ -1,128 +1,118 @@
 <template>
-  <div class="about">
-    <br><br><br>
-   <v-row justify="center">
-    <v-dialog
-      v-model="dialog"
-      persistent
-      max-width="600px"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-          Open Dialog
-        </v-btn>
-      </template>
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">User Profile</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-text-field
-                  label="Legal first name*"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-text-field
-                  label="Legal middle name"
-                  hint="example of helper text only on focus"
-                ></v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-text-field
-                  label="Legal last name*"
-                  hint="example of persistent helper text"
-                  persistent-hint
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  label="Email*"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  label="Password*"
-                  type="password"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-              >
-                <v-select
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Age*"
-                  required
-                ></v-select>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-              >
-                <v-autocomplete
-                  :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                  label="Interests"
-                  multiple
-                ></v-autocomplete>
-              </v-col>
-            </v-row>
-          </v-container>
-          <small>*indicates required field</small>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="dialog = false"
-          >
-            Close
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="dialog = false"
-          >
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
+  <div class="wrapper" >
+    <div class="child">
+     
+      <pre>
+    
+        <div class="center">
+        <!-- image in assets/unfurnished-flat.jpg -->
+        <v-img 
+            lazy-src="https://picsum.photos/id/11/10/6"
+            max-height="137"
+            
+            src="https://picsum.photos/id/11/500/300"
+          ></v-img>
+        </div>
+     
+        <v-card>
+        <!-- drop down Unit -->
+        <h2> This is a drop down for Unit </h2>    
+        <!-- add items from db - which table? -->
+        <v-combobox
+          filled
+          solo
+        ></v-combobox>   
+        </v-card>
+       
+        <v-card>
+          <!-- drop down Block -->
+        <h3> This is a drop down for Block </h3>
+        </v-card>
+      
+      </pre>
+    </div>
   </div>
 </template>
 
+
+<style scoped>
+
+  .img {
+    padding: 20px 20px 20px 0;
+  }
+  .center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+
+</style>
+
 <script>
+import axios from "axios";
+let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
+
 export default {
-  name: "salesstart",
+  name: "apartment",
   data() {
     return {
-      dialog: false   
-    }
+      blockValue: null,//From Dropdown
+      items: [],
+      blocks: [],
+    };
+  },
+  async mounted() {
+    let data = {
+      id: this.$store.state.development.id
+    };
+    await axios({
+      method: "post",
+      url: `${url}/getblocksForOptions`,
+      data: data
+    })
+      .then(
+        response => {
+          this.blocks = response.data;
+        },
+        error => {
+          console.log("the Error", error);
+        }
+      )
+      .catch(e => {
+        console.log(e);
+      });
+  },
+  methods: {
+    async chooseUnit() {
+      let filteredData = this.blocks.filter(el => {
+        return el.subsectionName === this.blockValue;
+      });
+      let data = {
+        id: this.$store.state.development.id,
+        subsection: filteredData[0].id
+      };
+      await axios({
+        method: "post",
+        url: `${url}/getUnitsForOptions`,
+        data: data
+      })
+        .then(
+          response => {
+            let filteredData = response.data.filter(el => {
+              return el.unitName.substring(2, 1) !== ".";
+            });
+            this.items = filteredData;
+          },
+          error => {
+            console.log(error);
+          }
+        )
+        .catch(e => {
+          console.log(e);
+        });
+    },
+  
   }
-}
+};
 </script>
