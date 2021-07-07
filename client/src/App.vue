@@ -38,7 +38,7 @@ body, html {
 }
 
 #app {
-    width: 65%;
+    width: 75%;
 }
 
 </style>

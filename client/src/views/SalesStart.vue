@@ -1,33 +1,42 @@
 <template>
   <div class="wrapper" >
-    <div class="child">
+    <div class="center">
      
       <pre>
     
-        <div class="center">
+        <div class="centerimg">
         <!-- image in assets/unfurnished-flat.jpg -->
-        <v-img 
-            lazy-src="https://picsum.photos/id/11/10/6"
-            max-height="137"
-            
-            src="https://picsum.photos/id/11/500/300"
+        <v-img                       
+            :src="flatPic"
+            max-height = '240'          
           ></v-img>
         </div>
-     
-        <v-card>
-        <!-- drop down Unit -->
-        <h2> This is a drop down for Unit </h2>    
-        <!-- add items from db - which table? -->
-        <v-combobox
-          filled
-          solo
-        ></v-combobox>   
-        </v-card>
-       
-        <v-card>
-          <!-- drop down Block -->
-        <h3> This is a drop down for Block </h3>
-        </v-card>
+        <!--
+        lazy-src="https://picsum.photos/id/11/10/6"
+        src="https://picsum.photos/id/11/500/300"
+        -->
+        
+         <div>
+          <v-autocomplete
+            v-model="blockValue"
+            :items="blocks"
+            dense
+            filled
+            item-text="subsectionName"
+            label="Choose Block"
+            @change="chooseUnit"
+          ></v-autocomplete>
+        </div>
+        <div>
+          <v-autocomplete
+            v-model="unitValue"
+            :items="items"
+            dense
+            filled
+            item-text="unitName"
+            label="Choose Unit"
+          ></v-autocomplete>
+        </div>    
       
       </pre>
     </div>
@@ -46,41 +55,56 @@
     margin-right: auto;
     width: 50%;
   }
+  .centerimg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
+  }
 
 </style>
 
 <script>
 import axios from "axios";
-let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
-
+// let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
 export default {
-  name: "apartment",
+  name: "salesstart",
+  //name: "apartment",
   data() {
     return {
       blockValue: null,//From Dropdown
+      unitValue: null,
+      flatPic: require('../assets/unfurnished-flat.jpg'),
       items: [],
       blocks: [],
     };
   },
   async mounted() {
-    let data = {
+    console.log("Checking ID");
+       console.log("Checking ID2");
+    console.log("Connor",this.$store.state.development.id);
+   
+    let data = {      
       id: this.$store.state.development.id
+
     };
     await axios({
       method: "post",
-      url: `${url}/getblocksForOptions`,
+      url: `http://localhost:3000/getblocksForOptions`,
       data: data
     })
       .then(
         response => {
+          console.log(response.data)
           this.blocks = response.data;
+           console.log(response.data);
         },
         error => {
           console.log("the Error", error);
         }
       )
       .catch(e => {
-        console.log(e);
+        console.log("THERE IS AN ERROR",e);
       });
   },
   methods: {
@@ -94,7 +118,7 @@ export default {
       };
       await axios({
         method: "post",
-        url: `${url}/getUnitsForOptions`,
+        url: `http://localhost:3000/getUnitsForOptions`,
         data: data
       })
         .then(
@@ -116,3 +140,5 @@ export default {
   }
 };
 </script>
+
+
