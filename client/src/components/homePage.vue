@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1> This is my my home </h1>
+    <h1>This is my my home</h1>
   </v-container>
 </template>
 
@@ -8,9 +8,6 @@
 export default {
   name: "homePage",
 
-
-  data: () => ({
-    
-  }),
+  data: () => ({}),
 };
 </script>

@@ -7,9 +7,11 @@ export default new Vuex.Store({
   state: {
     development: {
       id: 1,
-      developmentName: 'Endulini' }
+      developmentName: "Endulini",
+    },
+    url: "http://localhost:3000",
   },
-  
+
   mutations: {},
   actions: {},
   modules: {},

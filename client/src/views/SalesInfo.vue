@@ -3,7 +3,7 @@
   <div class="about">
     
     <br><br><br>
-   
+   <!-- list refering to sales info - material design icon pack -->
    <v-row justify="center">
     <v-dialog
       v-model="dialog"
@@ -128,6 +128,26 @@
                   label="Bank Statement"
                   filled
                   hint="Bank Statement"
+                  persistent-hint
+                ></v-file-input>     
+              </v-col>
+
+              <v-col cols="12" sm="12">
+                <v-file-input
+                  label="Payslip"
+                  filled
+                  multiple
+                  hint="Up to 3 payslip pref"
+                  persistent-hint
+                ></v-file-input>     
+              </v-col>
+
+              <v-col cols="12" sm="12">
+                <v-file-input
+                  label="FICA"
+                  filled
+                  multiple
+                  hint="FICA Documents"
                   persistent-hint
                 ></v-file-input>     
               </v-col>

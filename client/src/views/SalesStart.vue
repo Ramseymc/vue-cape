@@ -1,8 +1,9 @@
 <template>
-  <div class="wrapper" >
+  <div class="wrapper">
     <div class="center">
-       <pre>
-      
+      <pre>
+      <v-row class="text-center">
+      <v-col cols="12">
           <div class="centerimg">
           <!-- image in assets/unfurnished-flat.jpg -->
           <v-img    class="mx-auto"                    
@@ -10,11 +11,8 @@
               max-height = '240'          
             ></v-img>
           </div>
-          <!--
-          lazy-src="https://picsum.photos/id/11/10/6"
-          src="https://picsum.photos/id/11/500/300"
-          -->                 
-  
+          </v-col>
+                  <v-col cols="6">    
           <div>
             <v-autocomplete class="mx-auto"
               v-model="blockValue"
@@ -25,8 +23,10 @@
               label="Choose Block"
               @change="chooseUnit"
             ></v-autocomplete>
-          </div>      
-       
+          </div>  
+            </v-col>    
+            
+          <v-col cols="6">
           <div>
             <v-autocomplete class="mx-auto"
               v-model="unitValue"
@@ -37,111 +37,130 @@
               label="Choose Unit"
             ></v-autocomplete>
           </div>    
-    
+            </v-col>
+       
+         
+        
+      </v-row>
       </pre>
+      <div>
+        <v-btn v-if="blockValue && unitValue" text @click="getClientInfo"
+          >Create Sale</v-btn
+        >
+      </div>
     </div>
+    <ClientInfo
+      :blockValue="blockValue"
+      :unitValue="unitValue"
+      :dialog="clientDialog"
+      @closeForm="closeClientForm"
+    />
   </div>
 </template>
 
-
-<style scoped>
-
-  .img {
-    padding: 20px 20px 20px 0;
-  }
-  .center {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-  }
-  .centerimg {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 75%;
-  }
-  .auto {
-    padding: 5px 5px 5px 5px;
-  }
-
-</style>
-
 <script>
 import axios from "axios";
+import ClientInfo from "../components/ClientInfo.vue";
 // let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
 export default {
   name: "salesstart",
   //name: "apartment",
+  components: {
+    ClientInfo,
+  },
   data() {
     return {
-      blockValue: null,//From Dropdown
+      blockValue: null, //From Dropdown
       unitValue: null,
-      flatPic: require('../assets/unfurnished-flat.jpg'),
+      flatPic: require("../assets/unfurnished-flat.jpg"),
       items: [],
       blocks: [],
+      clientDialog: false,
     };
   },
   async mounted() {
     console.log("Checking ID");
-       console.log("Checking ID2");
-    console.log("Connor",this.$store.state.development.id);
-   
-    let data = {      
-      id: this.$store.state.development.id
+    console.log("Checking ID2");
+    console.log("Connor", this.$store.state.development.id);
 
+    let data = {
+      id: this.$store.state.development.id,
     };
     await axios({
       method: "post",
       url: `http://localhost:3000/getblocksForOptions`,
-      data: data
+      data: data,
     })
       .then(
-        response => {
-          console.log(response.data)
+        (response) => {
+          console.log(response.data);
           this.blocks = response.data;
-           console.log(response.data);
+          console.log(response.data);
         },
-        error => {
+        (error) => {
           console.log("the Error", error);
         }
       )
-      .catch(e => {
-        console.log("THERE IS AN ERROR",e);
+      .catch((e) => {
+        console.log("THERE IS AN ERROR", e);
       });
   },
   methods: {
+    closeClientForm(event) {
+      this.clientDialog = event;
+    },
+    getClientInfo() {
+      this.clientDialog = !this.clientDialog;
+    },
     async chooseUnit() {
-      let filteredData = this.blocks.filter(el => {
+      let filteredData = this.blocks.filter((el) => {
         return el.subsectionName === this.blockValue;
       });
       let data = {
         id: this.$store.state.development.id,
-        subsection: filteredData[0].id
+        subsection: filteredData[0].id,
       };
       await axios({
         method: "post",
         url: `http://localhost:3000/getUnitsForOptions`,
-        data: data
+        data: data,
       })
         .then(
-          response => {
-            let filteredData = response.data.filter(el => {
+          (response) => {
+            let filteredData = response.data.filter((el) => {
               return el.unitName.substring(2, 1) !== ".";
             });
             this.items = filteredData;
           },
-          error => {
+          (error) => {
             console.log(error);
           }
         )
-        .catch(e => {
+        .catch((e) => {
           console.log(e);
         });
     },
-  
-  }
+  },
 };
 </script>
 
-
+<style scoped>
+.img {
+  padding: 20px 20px 20px 0;
+}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+.centerimg {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
+}
+.auto {
+  padding: 5px 5px 5px 5px;
+}
+</style>
