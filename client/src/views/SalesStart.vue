@@ -1,43 +1,43 @@
 <template>
   <div class="wrapper" >
     <div class="center">
-     
-      <pre>
-    
-        <div class="centerimg">
-        <!-- image in assets/unfurnished-flat.jpg -->
-        <v-img                       
-            :src="flatPic"
-            max-height = '240'          
-          ></v-img>
-        </div>
-        <!--
-        lazy-src="https://picsum.photos/id/11/10/6"
-        src="https://picsum.photos/id/11/500/300"
-        -->
-        
-         <div>
-          <v-autocomplete
-            v-model="blockValue"
-            :items="blocks"
-            dense
-            filled
-            item-text="subsectionName"
-            label="Choose Block"
-            @change="chooseUnit"
-          ></v-autocomplete>
-        </div>
-        <div>
-          <v-autocomplete
-            v-model="unitValue"
-            :items="items"
-            dense
-            filled
-            item-text="unitName"
-            label="Choose Unit"
-          ></v-autocomplete>
-        </div>    
+       <pre>
       
+          <div class="centerimg">
+          <!-- image in assets/unfurnished-flat.jpg -->
+          <v-img    class="mx-auto"                    
+              :src="flatPic"
+              max-height = '240'          
+            ></v-img>
+          </div>
+          <!--
+          lazy-src="https://picsum.photos/id/11/10/6"
+          src="https://picsum.photos/id/11/500/300"
+          -->                 
+  
+          <div>
+            <v-autocomplete class="mx-auto"
+              v-model="blockValue"
+              :items="blocks"
+              dense
+              filled
+              item-text="subsectionName"
+              label="Choose Block"
+              @change="chooseUnit"
+            ></v-autocomplete>
+          </div>      
+       
+          <div>
+            <v-autocomplete class="mx-auto"
+              v-model="unitValue"
+              :items="items"
+              dense
+              filled
+              item-text="unitName"
+              label="Choose Unit"
+            ></v-autocomplete>
+          </div>    
+    
       </pre>
     </div>
   </div>
@@ -60,6 +60,9 @@
     margin-left: auto;
     margin-right: auto;
     width: 75%;
+  }
+  .auto {
+    padding: 5px 5px 5px 5px;
   }
 
 </style>

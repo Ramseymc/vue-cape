@@ -22,75 +22,114 @@
       </template>
       <v-card>
         <v-card-title>
-          <span class="text-h5">User Profile</span>
+          <span class="text-h5">Client Info</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
+              <v-col cols="12"  sm="6" md="6" >
                 <v-text-field
-                  label="Legal first name*"
+                  label="First name*"
                   required
                 ></v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
+              </v-col>         
+              <v-col cols="12"  sm="6" md="6" >
                 <v-text-field
-                  label="Legal middle name"
-                  hint="example of helper text only on focus"
-                ></v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-                md="4"
-              >
-                <v-text-field
-                  label="Legal last name*"
-                  hint="example of persistent helper text"
-                  persistent-hint
+                  label="Last name*"                                    
                   required
                 ></v-text-field>
+              </v-col>                            
+               <!--
+                   <v-col   cols="12"    >
+                  <v-select
+                    :items="['0-17', '18-29', '30-54', '54+']"
+                    label="Age*"
+                    required
+                  ></v-select>
+                   </v-col>
+                -->
+                       
+              <v-col   cols="12"  >
+              <v-text-field
+                  label="ID Number*"               
+                  required
+                ></v-text-field>          
               </v-col>
-              <v-col cols="12">
+
+               <v-col cols="12">
                 <v-text-field
                   label="Email*"
                   required
                 ></v-text-field>
               </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  label="Password*"
-                  type="password"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-              >
-                <v-select
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Age*"
-                  required
-                ></v-select>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="6"
-              >
+
+                  <!--
                 <v-autocomplete
                   :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
                   label="Interests"
                   multiple
                 ></v-autocomplete>
+              -->
+
+               <v-col cols="12"  >
+               <large><b> Bank Details </b> </large>
+              </v-col>
+
+           
+              <v-col cols="12"  sm="6"  >
+                <v-text-field
+                  label="Bank*"               
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col  cols="12" sm="6"  >
+                <v-text-field
+                  label="Branch Code*"               
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <v-col  cols="12" sm="8"  >
+                <v-text-field
+                  label="Account Number*"               
+                  required
+                ></v-text-field>
+              </v-col>
+               <v-col  cols="12" sm="4" >
+                <v-text-field
+                  label="Account Type*"               
+                  required
+                ></v-text-field>
+              </v-col>
+
+              <medium> File Uploads </medium>
+              <v-col cols="12" sm="12">
+                <v-file-input
+                  label="POD"
+                  filled
+                  hint="POD"
+                  persistent-hint
+                ></v-file-input>     
+              </v-col>
+
+              <v-col  cols="12" sm="12" >
+                <v-file-input
+                  label="ID/Passport"
+                  filled
+                  hint="ID/Passport Photo"
+                  persistent-hint
+                  prepend-icon="mdi-camera"
+                ></v-file-input>     
+              </v-col>
+
+              <v-col cols="12" sm="12">
+                <v-file-input
+                  label="Bank Statement"
+                  filled
+                  hint="Bank Statement"
+                  persistent-hint
+                ></v-file-input>     
               </v-col>
             </v-row>
           </v-container>

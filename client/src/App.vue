@@ -6,7 +6,7 @@
      <v-btn text :to="{name: 'salesstart'}">Sales</v-btn>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="mx-auto">
       <router-view />
     </v-main>
   </v-app>
