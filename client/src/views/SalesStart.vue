@@ -79,9 +79,9 @@ export default {
     };
   },
   async mounted() {
-    console.log("Checking ID");
-    console.log("Checking ID2");
-    console.log("Connor", this.$store.state.development.id);
+    // console.log("Checking ID");
+    // console.log("Checking ID2");
+    // console.log("Connor", this.$store.state.development.id);
 
     let data = {
       id: this.$store.state.development.id,

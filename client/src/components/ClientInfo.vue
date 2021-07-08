@@ -220,7 +220,7 @@ export default {
       }
       if (this.filePaySlip) {
         this.filePaySlip.forEach((el) => {
-          contains.push("filePayslip");
+          contains.push("filePaySlip");
           files.push(el);
         });
       } else {
@@ -264,6 +264,7 @@ export default {
         (response) => {
           console.log(response.data);
           this.snackbar = true;
+          this.closeClientInfo()
         },
 
         (error) => {
