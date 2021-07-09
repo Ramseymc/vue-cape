@@ -95,12 +95,36 @@ router.post("/getblocksForOptions", (req, res) => {
     });
   });
 
+  router.post("/deleteSalesRecord", (req, res) => {
+    let mysql = `delete from salesinfo where id = ${req.body.id}`
+    pool.getConnection(function (err, connection) {
+      if (err) {
+        connection.release();
+        resizeBy.send("Error with connection");
+      }
+      connection.query(mysql, function (error, result) {
+        if (error) {
+          console.log(error);
+          
+        } else {
+          res.json(result);
+        }
+      });
+      connection.release();
+    });
+  });
+
+  
+  
+  
+
   router.post("/createClient", upload.array("documents"), (req, res) => {
       // console.log("The Body", req.body)
-      // console.log("TEST",req.files)
+      console.log("TEST",req.files)
     //  res.json({awesome: "It Works!!!!"})
 
-    //
+    // pull the mimetype from req.files - futureproof
+
 
       let fileDetails = []
 
@@ -112,7 +136,8 @@ router.post("/getblocksForOptions", (req, res) => {
 
       contains.forEach((el, index) => {
         let fileType = el
-        let fileName = req.files[index].filename
+        
+        let fileName = req.files[index].filename//Add MimeType (pdf/jpg etc)
         let insert ={
             fileType: fileType,
             fileName: fileName 
@@ -224,8 +249,8 @@ router.post("/getblocksForOptions", (req, res) => {
    
 
           let mysql = `INSERT INTO salesinfo (firstname, lastname, iDNumber, email, bankName, accountNumber, accountType, block, unit, fileOTP, fileId, fileBank, filePaySlip, fileFica) VALUES (
-                '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${fileOTP}','${fileId}',
-                '${fileBank}','${filePaySlip}','${fileFica}'
+                '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${fileOTP}.pdf','${fileId}.pdf',
+                '${fileBank}.pdf','${filePaySlip}.pdf','${fileFica}.pdf'
       );`
 
 //       console.log(mysql)
