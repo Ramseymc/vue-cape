@@ -3,7 +3,7 @@
     <div class="about">
       <br /><br /><br />
       <v-row justify="center">
-        <v-dialog v-model="dialog" persistent max-width="600px">
+        <v-dialog v-model="dialog" persistent max-width="900px">
           <v-card>
             <v-card-title>
               <span class="text-h5">Client Info</span>
@@ -63,7 +63,7 @@
                     <label><b> Bank Details </b> </label>
                   </v-col>
 
-                  <v-col cols="12" sm="6">
+                  <v-col cols="12" sm="6" md="6">
                     <v-text-field
                       v-model="bankName"
                       label="Bank*"
@@ -71,17 +71,26 @@
                     ></v-text-field>
                   </v-col>
 
-                  <v-col cols="12" sm="8">
+                  <v-col cols="12" sm="6" md="6">
+                    <v-autocomplete
+                      v-model="accountType"
+                      :items="['SAVINGS', 'CHEQUE', 'CREDIT']"
+                      label="Account Type*"
+                      required
+                      chips
+                    ></v-autocomplete>
+                  </v-col>
+                  <!-- <v-text-field
+                      v-model="accountType"
+                      label="Account Type*"
+                      required
+                    ></v-text-field>
+                  </v-col> -->
+
+                  <v-col cols="12" sm="12">
                     <v-text-field
                       v-model="accountNumber"
                       label="Account Number*"
-                      required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="4">
-                    <v-text-field
-                      v-model="accountType"
-                      label="Account Type*"
                       required
                     ></v-text-field>
                   </v-col>
@@ -264,7 +273,7 @@ export default {
         (response) => {
           console.log(response.data);
           this.snackbar = true;
-          this.closeClientInfo()
+          this.closeClientInfo();
         },
 
         (error) => {

@@ -71,11 +71,36 @@ router.post("/getblocksForOptions", (req, res) => {
       connection.release();
     });
   });
+  
+  // this is going to fire when opening SalesInfo.vue, check the reponse out, use it in a :for-each <v-list> for each row 
+  // also add an icon to download the attached files
+  //
+  router.post("/getClientInfoForSalesInfo", (req, res) => {
+    let mysql = `select * from salesinfo where id > 0 and firstName > '';`
+    pool.getConnection(function (err, connection) {
+      if (err) {
+        connection.release();
+        resizeBy.send("Error with connection");
+      }
+      connection.query(mysql, function (error, result) {
+        if (error) {
+          console.log(error);
+          
+        } else {
+          console.log("SERVER-SIDE, RESULT in salesRoutes.js",result)
+          res.json(result);
+        }
+      });
+      connection.release();
+    });
+  });
 
   router.post("/createClient", upload.array("documents"), (req, res) => {
       // console.log("The Body", req.body)
       // console.log("TEST",req.files)
     //  res.json({awesome: "It Works!!!!"})
+
+    //
 
       let fileDetails = []
 
