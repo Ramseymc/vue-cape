@@ -1,5 +1,7 @@
 <template>
+<v-container>
   <div class="wrapper">
+    <v-row justify="center">
     <div class="center">
       <pre>
       <v-row class="text-center">
@@ -55,7 +57,10 @@
       :dialog="clientDialog"
       @closeForm="closeClientForm"
     />
+     </v-row>
   </div>
+ 
+  </v-container>
 </template>
 
 <script>
