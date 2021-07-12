@@ -114,68 +114,103 @@ router.post("/getblocksForOptions", (req, res) => {
     });
   });
 
-  
-  
-  
+  router.post("/updateClient", upload.array("documents"), (req, res) => {
+    console.log(req.body.thisData[0].firstName)
+      res.json({Awesome: "it Works!!!!"})
+      
+      let mysql = `Ipdate salesinfo set firstname='${req.body.firstName}' etc etc , lastname, iDNumber, email, bankName, accountNumber, accountType, block, unit, fileOTP, fileId, fileBank, filePaySlip, fileFica) VALUES (
+        '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${fileOTP}.pdf','${fileId}.pdf',
+        '${fileBank}.pdf','${filePaySlip}.pdf','${fileFica}.pdf'
+);`
 
+// //
+// pool.getConnection(function (err, connection) {
+// if (err) {
+//   connection.release();
+//   resizeBy.send("Error with connection");
+// }
+// connection.query(mysql, function (error, result) {
+//   if (error) {
+//     console.log(error);
+//   } else {
+//     res.json(result);
+//     console.log("After INSERT stmnt")
+//     console.log(result)
+//   }
+// });
+// connection.release();
+// });
+
+  })
+
+  
   router.post("/createClient", upload.array("documents"), (req, res) => {
       // console.log("The Body", req.body)
-      console.log("TEST",req.files)
-    //  res.json({awesome: "It Works!!!!"})
-
-    // pull the mimetype from req.files - futureproof
-
-
+      // got mutler files
+      // pull the mimetype from req.files - futureproof
       let fileDetails = []
 
-      // console.log(req.body.contains.split(","))
-
+      // where do we use the documents array input parameter?
+      // NB! I need to Understand the documents and req.files difference
       let contains = req.body.contains.split(",")
-      console.log(contains)
+      console.log("FILETypes",contains)
+      console.log("FILES",req.files)
+      console.log("FILEextType","")
 
-
+      // go through contains, and get the matching file, insert it into the fileDetails array
       contains.forEach((el, index) => {
         let fileType = el
-        
-        let fileName = req.files[index].filename//Add MimeType (pdf/jpg etc)
-        let insert ={
-            fileType: fileType,
-            fileName: fileName 
-           }
-           fileDetails.push(insert)
+        if (el !== null) {
+          var fileExt = req.files[index].mimetype.substr(req.files[index].mimetype.indexOf('/') + 1, req.files[index].mimetype.length - req.files[index].mimetype.indexOf('/'))
+          console.log('FileExt = ', fileExt )
+          
+          var fileN = req.files[index].filename
+          console.log('Index of Extension = ', fileN.indexOf(fileExt) )
+          let fileName = req.files[index].filename
+          if (fileN.indexOf(fileExt) > 0) {
+            fileName = fileName + "." + fileExt //Add MimeType (pdf/jpg etc)
+          }
+          // let fileName = req.files[index].filename + "." + fileExt //Add MimeType (pdf/jpg etc)
+          // help with the fileExt , why is it updating all the DB records and why is it appending twice on trying to Download/GET the file 
+         // console.log("SERVER SIDE FileInfo before INSERT", req.files[index])
+          let insert = {
+              fileType: fileType,
+              fileName: fileName 
+            }
+            fileDetails.push(insert)
+        }
+      })
+      console.log("TEST",req.files)  // this array is blank again
+      console.log(fileDetails)
+
+      // TEST [
+      //   {
+      //     fieldname: 'documents',
+      //     originalname: 'account_statement.pdf',
+      //     encoding: '7bit',
+      //     mimetype: 'application/pdf',
+      //     destination: './public/uploads/',
+      //     filename: 'de330fdf2feddc92c5856409a7db3aa4',
+      //     path: 'public\\uploads\\de330fdf2feddc92c5856409a7db3aa4',
+      //     size: 51743
+      //   }
+      // ]
+      // [
+      //   { fileType: 'fileOTP', fileName: 'de330fdf2feddc92c5856409a7db3aa4' }
+      // ]
+
+      fileDetails.forEach((el) => {
+        let filtered = req.files.filter((el2) => {
+          return el2.filename === el.fileName
+        })
+        el.fileNameUpdated = `${el.fileName}.${filtered[0].mimetype.split("/")[1]}`
+        fs.rename(`public/uploads/${el.fileName}`, `public/uploads/${el.fileNameUpdated}`, (err) => {
+          if (err) throw err
+          console.log("Done")
+        } )
       })
 
-      // let fileDetails = [
-      //   {
-      //     fileType: "fileOTP",
-      //     fileName: "otpDocument",
-      //   },
-      //   {
-      //     fileType: "fileFica",
-      //     fileName: "ficaDocument1",
-      //   },
-      //   {
-      //     fileType: "fileFica",
-      //     fileName: "ficaDocument2",
-      //   },
-      //   {
-      //     fileType: "filePaySlip",
-      //     fileName: "payslipDocument1",
-      //   },
-      //   {
-      //     fileType: "filePaySlip",
-      //     fileName: "payslipDocument2",
-      //   },
-      //   {
-      //     fileType: "fileId",
-      //     fileName: "idDocument1",
-      //   },
-      //   {
-      //     fileType: "fileBankStatement",
-      //     fileName: "bankStatementDocument1",
-      //   },
-      
-      // ];
+
       
       let fileFica;
       let fileOTP;
@@ -239,25 +274,12 @@ router.post("/getblocksForOptions", (req, res) => {
         } else {
           filePaySlip = ""
         }
-      }
-      // console.log("OTP",fileOTP)
-      // console.log("Fica",fileFica)
-      // console.log("Payslip",filePaySlip)
-      // console.log("Bank",fileBank)
-      // console.log("ID",fileId)
-
-   
+      }   
 
           let mysql = `INSERT INTO salesinfo (firstname, lastname, iDNumber, email, bankName, accountNumber, accountType, block, unit, fileOTP, fileId, fileBank, filePaySlip, fileFica) VALUES (
                 '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${fileOTP}.pdf','${fileId}.pdf',
                 '${fileBank}.pdf','${filePaySlip}.pdf','${fileFica}.pdf'
       );`
-
-//       console.log(mysql)
-//       INSERT INTO salesinfo (firstname, lastname, iDNumber, email, bankName, accountNumber, accountType, block, unit, fileOTP, fileId, fileBank, filePaySlip, fileFica) VALUES (
-//         'Connor','McLean','9308175039088','test@gmail.com','CAPITEC','1234567890','SAVINGS','Block E','E201','40e06e9d5e56129ac32dbfe55b8cf79d','4c57bec808d2ffae784faf691bfe4ea2',
-//         '7f7084baa1709b0f8f3a3f7d764fb1cb','7fda700ee2f8c0bc0523f9cefc8dd2bd,11327f704ba7574d47db295d295a17e4','4a9f81523e5ba28ca01dd03c83fada27,3165327ce4b84f850e793c319858f95e'
-// );
 
       //
       pool.getConnection(function (err, connection) {

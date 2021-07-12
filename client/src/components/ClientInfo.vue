@@ -182,6 +182,8 @@ export default {
     dialog: Boolean,
     blockValue: String,
     unitValue: String,
+    saleId: String,
+
   },
 
   data() {
@@ -216,8 +218,8 @@ export default {
       let files = [];
       let contains = [];
       if (this.fileOPT !== null) {
-        contains.push("fileOTP");
-        files.push(this.fileOPT);
+        contains.push("fileOTP");  
+        files.push(this.fileOPT) ; // append mimetype here?
       }
       if (this.fileId !== null) {
         contains.push("fileId");
@@ -251,8 +253,12 @@ export default {
 
       let formData = new FormData();
       for (var x = 0; x < files.length; x++) {
-        formData.append("documents", files[x]);
+        formData.append("documents", files[x])
+        // + '.' + files[x].type);  // append mimetype here?
+        // the type var holds 'application/pdf' so I need only the pdf part  
+        console.log("FileInfo::: ", files[x]);
       }
+      console.log("formData = " , formData);
       // formData.append("documents", files)
       formData.append("firstName", this.firstName);
       formData.append("lastName", this.lastName);
@@ -272,7 +278,9 @@ export default {
       }).then(
         (response) => {
           console.log(response.data);
+          // little box saying 'Posted Successfully 
           this.snackbar = true;
+          // close the form after completing 
           this.closeClientInfo();
         },
 
