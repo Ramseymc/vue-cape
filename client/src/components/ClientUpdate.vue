@@ -13,14 +13,14 @@
                 <v-row>
                   <v-col cols="12" sm="6" md="6">
                     <v-text-field
-                      v-model="editData[0].firstName"
+                      v-model="editData[0].firstname"
                       label="First name*"
                       required
                     ></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="6">
                     <v-text-field
-                      v-model="editData[0].lastName"
+                      v-model="editData[0].lastname"
                       label="Last name*"
                       required
                     ></v-text-field>
@@ -73,10 +73,11 @@
                   </v-col>
 
                   <!-- File Uploads  -->
-                  <!-- <label> File Uploads </label>
+                  <label> File Uploads </label>
                   <v-col cols="12" sm="12">
                     <v-file-input
-                      v-model="fileOPT"
+                     v-if="editData[0].fileOPT === null || editData[0].fileOPT === ''"
+                      v-model="editData[0].fileOPT"
                       label="OPT"
                       accept="image/png, image/jpeg, image/bmp, image/jpg, application/pdf"
                       filled
@@ -87,7 +88,9 @@
 
                   <v-col cols="12" sm="12">
                     <v-file-input
-                      v-model="fileId"
+                    v-if="editData[0].fileId === null || editData[0].fileId === ''"
+                      v-model="editData[0].fileId"
+
                       label="ID/Passport"
                       filled
                       hint="ID/Passport Photo"
@@ -98,7 +101,7 @@
 
                   <v-col cols="12" sm="12">
                     <v-file-input
-                      v-model="fileBank"
+                      v-model="editData[0].fileBank"
                       label="Bank Statement"
                       filled
                       hint="Bank Statement"
