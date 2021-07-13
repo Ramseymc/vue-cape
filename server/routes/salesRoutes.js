@@ -26,14 +26,12 @@ const upload = multer({
   },
 });
 
+// Server Methods
 router.get("/test", (req,res) => {
   res.json({Awesome: "It Works!!!!!"})
 })
-//
-//
-//
-//
 
+// get blocks for development
 router.post("/getblocksForOptions", (req, res) => {
     let mysql = `select * from subsection where development = ${req.body.id}`;
     pool.getConnection(function (err, connection) {
@@ -54,8 +52,10 @@ router.post("/getblocksForOptions", (req, res) => {
     });
   });
 
+  // get avail units for selected development and block
   router.post("/getUnitsForOptions", (req, res) => {
-    let mysql = `select * from units where development = ${req.body.id} and subsection = ${req.body.subsection}`;
+    let mysql = `select u.* from units u where u.development = ${req.body.id} and u.subsection = ${req.body.subsection}
+     JOIN salesinfo s ON s.block = u.subsection`;
     pool.getConnection(function (err, connection) {
       if (err) {
         connection.release();
@@ -72,9 +72,7 @@ router.post("/getblocksForOptions", (req, res) => {
     });
   });
   
-  // this is going to fire when opening SalesInfo.vue, check the reponse out, use it in a :for-each <v-list> for each row 
-  // also add an icon to download the attached files
-  //
+  // get all valid salesInfo
   router.post("/getClientInfoForSalesInfo", (req, res) => {
     let mysql = `select * from salesinfo where id > 0 and firstName > '';`
     pool.getConnection(function (err, connection) {
@@ -95,6 +93,7 @@ router.post("/getblocksForOptions", (req, res) => {
     });
   });
 
+  // delete salesinfo record matching 'id'
   router.post("/deleteSalesRecord", (req, res) => {
     let mysql = `delete from salesinfo where id = ${req.body.id}`
     pool.getConnection(function (err, connection) {
@@ -114,65 +113,61 @@ router.post("/getblocksForOptions", (req, res) => {
     });
   });
 
+  // update the salesinfo record matching 'id'
   router.post("/updateClient", upload.array("documents"), (req, res) => {
     console.log(req.body.thisData[0].firstName)
-      res.json({Awesome: "it Works!!!!"})
-      
-      let mysql = `Ipdate salesinfo set firstname='${req.body.firstName}' etc etc , lastname, iDNumber, email, bankName, accountNumber, accountType, block, unit, fileOTP, fileId, fileBank, filePaySlip, fileFica) VALUES (
-        '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${fileOTP}.pdf','${fileId}.pdf',
-        '${fileBank}.pdf','${filePaySlip}.pdf','${fileFica}.pdf'
-);`
+      //res.json({Awesome: "it Works!!!!"})
 
-// //
-// pool.getConnection(function (err, connection) {
-// if (err) {
-//   connection.release();
-//   resizeBy.send("Error with connection");
-// }
-// connection.query(mysql, function (error, result) {
-//   if (error) {
-//     console.log(error);
-//   } else {
-//     res.json(result);
-//     console.log("After INSERT stmnt")
-//     console.log(result)
-//   }
-// });
-// connection.release();
-// });
+      let mysql = `UPDATE salesinfo 
+      SET 
+       firstName='${req.body.thisData[0].firstName}',
+       lastName='${req.body.thisData[0].lastName}',
+       iDNumber='${req.body.thisData[0].iDNumber}',
+       email='${req.body.thisData[0].email}',
+       bankName='${req.body.thisData[0].bankName}',
+       accountNumber='${req.body.thisData[0].accountNumber}',
+       accountType='${req.body.thisData[0].accountType}',
+       block='${req.body.thisData[0].block}',
+       unit='${req.body.thisData[0].unit}'
+      WHERE id='${req.body.thisData[0].id}'`
+        
+      pool.getConnection(function (err, connection) {
+        if (err) {
+          connection.release();
+          resizeBy.send("Error with connection");    
+        }
+        connection.query(mysql, function (error, result) {
+          if (error) {    
+            console.log(error);
+            
+          } else {
+            console.log("_UPDATE SUCCESS");
+            //res.json(result);
+          }
+        });
+        connection.release();
+      });  
 
   })
 
   
   router.post("/createClient", upload.array("documents"), (req, res) => {
-      // console.log("The Body", req.body)
-      // got mutler files
+  
       // pull the mimetype from req.files - futureproof
       let fileDetails = []
-
-      // where do we use the documents array input parameter?
-      // NB! I need to Understand the documents and req.files difference
-      let contains = req.body.contains.split(",")
-      console.log("FILETypes",contains)
+      let contains = req.body.contains.split(",") 
       console.log("FILES",req.files)
-      console.log("FILEextType","")
 
       // go through contains, and get the matching file, insert it into the fileDetails array
       contains.forEach((el, index) => {
         let fileType = el
         if (el !== null) {
-          var fileExt = req.files[index].mimetype.substr(req.files[index].mimetype.indexOf('/') + 1, req.files[index].mimetype.length - req.files[index].mimetype.indexOf('/'))
-          console.log('FileExt = ', fileExt )
-          
+          var fileExt = req.files[index].mimetype.substr(req.files[index].mimetype.indexOf('/') + 1, req.files[index].mimetype.length - req.files[index].mimetype.indexOf('/'))                
           var fileN = req.files[index].filename
-          console.log('Index of Extension = ', fileN.indexOf(fileExt) )
           let fileName = req.files[index].filename
           if (fileN.indexOf(fileExt) > 0) {
             fileName = fileName + "." + fileExt //Add MimeType (pdf/jpg etc)
-          }
-          // let fileName = req.files[index].filename + "." + fileExt //Add MimeType (pdf/jpg etc)
-          // help with the fileExt , why is it updating all the DB records and why is it appending twice on trying to Download/GET the file 
-         // console.log("SERVER SIDE FileInfo before INSERT", req.files[index])
+          }         
           let insert = {
               fileType: fileType,
               fileName: fileName 
@@ -180,25 +175,10 @@ router.post("/getblocksForOptions", (req, res) => {
             fileDetails.push(insert)
         }
       })
-      console.log("TEST",req.files)  // this array is blank again
-      console.log(fileDetails)
+      console.log(fileDetails)    
 
-      // TEST [
-      //   {
-      //     fieldname: 'documents',
-      //     originalname: 'account_statement.pdf',
-      //     encoding: '7bit',
-      //     mimetype: 'application/pdf',
-      //     destination: './public/uploads/',
-      //     filename: 'de330fdf2feddc92c5856409a7db3aa4',
-      //     path: 'public\\uploads\\de330fdf2feddc92c5856409a7db3aa4',
-      //     size: 51743
-      //   }
-      // ]
-      // [
-      //   { fileType: 'fileOTP', fileName: 'de330fdf2feddc92c5856409a7db3aa4' }
-      // ]
-
+      // rename the uploaded file with the correct extension
+      // ** NOTE: I can remove the fileExt / fileN substr check
       fileDetails.forEach((el) => {
         let filtered = req.files.filter((el2) => {
           return el2.filename === el.fileName
@@ -209,8 +189,6 @@ router.post("/getblocksForOptions", (req, res) => {
           console.log("Done")
         } )
       })
-
-
       
       let fileFica;
       let fileOTP;
@@ -281,7 +259,6 @@ router.post("/getblocksForOptions", (req, res) => {
                 '${fileBank}.pdf','${filePaySlip}.pdf','${fileFica}.pdf'
       );`
 
-      //
       pool.getConnection(function (err, connection) {
         if (err) {
           connection.release();
@@ -297,89 +274,7 @@ router.post("/getblocksForOptions", (req, res) => {
           }
         });
         connection.release();
-      });
-
-      // ** TO DO-----------------------------------
-      // Ask Wayne if this is correct and what the response should kind of be if it's successfull 
-      // post results to salesinfo page
-      //-----------------------------------------
-
-      // let otpFilename = fileDetails.filter((el) => {
-      //   return filetype === "fileOTP"
-      // })[0].fileName
-
-      // let idFilename = "";
-      // let bankFilename = "";
-      // let payslipFilename = "";
-      // // let payslipFilenameFilter = fileDetails.filter((el) => {
-      // //   return filetype === "filePaySlip"
-      // // }) 
-      // // if (payslipFilenameFilter.length > 1) {
-      // //   "fileName1,filname2"
-      // // } 
-      
-      // let ficaFilename = "";
-
-      // let mysql = `insert into cvlientInfo (firstName, lastName, fileOTP) value (
-      //   '${req.body.firstName}', '${req.body.lastName}', '${otpFilename}'
-      // )`
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //  fields fileOTP etc String
-    //  filePayslip type JSON
-
-
-
-      
-    
-
-      // fileDetails [
-      //   { fileType: 'fileOTP', fileName: undefined },
-      
-      //   { fileType: 'fileFica', fileName: undefined },
-      //   { fileType: 'fileFica', fileName: undefined }
-      // ]
-      
-      //[ 'fileOTP', 'fileFica', 'fileFica' ]
-      // console.log("fileDetails",fileDetails)
-     // TypeError: req.body.contains.forEach is not a function
-      // req.files.forEach((el) => {
-      //   console.log("forEAch",el)
-      //   console.log("forEach Files",el.originalname)
-      //   console.log("forEach Files",el.filename)
-      // })
-
-    
-      // let mysql = `select * from units where development = ${req.body.id} and subsection = ${req.body.subsection}`;
-      // pool.getConnection(function (err, connection) {
-      //   if (err) {
-      //     connection.release();
-      //     resizeBy.send("Error with connection");
-      //   }
-      //   connection.query(mysql, function (error, result) {
-      //     if (error) {
-      //       console.log(error);
-      //     } else {
-      //       res.json(result);
-      //     }
-      //   });
-      //   connection.release();
-      // });
-
+      });     
   })
-
 
 module.exports = router;
