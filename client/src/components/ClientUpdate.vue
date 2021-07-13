@@ -129,7 +129,7 @@
                       hint="FICA Documents"
                       persistent-hint
                     ></v-file-input>
-                  </v-col> -->
+                  </v-col>
 
                 </v-row>
               </v-container>

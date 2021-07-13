@@ -124,7 +124,10 @@ export default {
       let data = {
         id: this.$store.state.development.id,
         subsection: filteredData[0].id,
+        subsectionName: filteredData[0].subsectionName,
+        //subsectionName: 
       };
+      console.log("filteredData for getting subsectionname:",filteredData),
       await axios({
         method: "post",
         url: `http://localhost:3000/getUnitsForOptions`,

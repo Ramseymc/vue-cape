@@ -66,15 +66,16 @@
                 <v-list-item-action>
                   <div>
                   <v-btn :id="item.id" text @click="deleteItem($event)"
-                      ><v-icon color="red">mdi-delete</v-icon></v-btn
+                      ><v-icon color="brown">
+                        mdi-delete</v-icon></v-btn
                     >
                     <v-btn :id="item.id" text @click="editItem($event)"
                       ><v-icon color="green"
                         >mdi-file-document-edit</v-icon
                       ></v-btn
                     >
-                    <a :href="item.fileOTPurl" download target>
-                      _ <v-icon color="blue">mdi-file-document-edit</v-icon>
+                    <a :href="item.fileOTPurl" download target style="text-decoration: none;">
+                       <v-icon color="red">mdi-file-pdf-box</v-icon>
                     </a>
                   </div>
                 </v-list-item-action>
@@ -150,18 +151,20 @@ export default {
       };
       await axios({
         method: "post",
-        url: `http://localhost:3000/getClientInfoForSalesInfo`,
+        // replace this with global url
+        url: `${this.url}/getClientInfoForSalesInfo`,
         data: data,
       })
         .then(
           (response) => {
             console.log("CLIENT-SIDE, Connor RESPONSE DATA", response.data);
-            console.log(response.data);
+            // console.log(response.data);
 
             this.sales = response.data;
             this.sales.forEach((el) => {
               el.fileOTPurl = `${this.url}/uploads/${el.fileOTP}`;
             });
+
           },
           (error) => {
             console.log("the Error", error);
@@ -179,7 +182,8 @@ export default {
       };
       await axios({
         method: "post",
-        url: `http://localhost:3000/deleteSalesRecord`,
+        // replace this with global url
+        url: `${this.url}/deleteSalesRecord`,
         data: data,
       })
         .then(
