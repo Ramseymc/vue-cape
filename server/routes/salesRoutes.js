@@ -133,8 +133,8 @@ router.post("/getblocksForOptions", (req, res) => {
 
       let mysql = `UPDATE salesinfo 
       SET 
-       firstName='${req.body.thisData[0].firstName}',
-       lastName='${req.body.thisData[0].lastName}',
+       firstName='${req.body.thisData[0].firstname}',
+       lastName='${req.body.thisData[0].lastname}',
        iDNumber='${req.body.thisData[0].iDNumber}',
        email='${req.body.thisData[0].email}',
        bankName='${req.body.thisData[0].bankName}',
@@ -143,7 +143,9 @@ router.post("/getblocksForOptions", (req, res) => {
        block='${req.body.thisData[0].block}',
        unit='${req.body.thisData[0].unit}'
       WHERE id='${req.body.thisData[0].id}'`
-        
+
+      console.log("mySQL = ", mysql);
+
       pool.getConnection(function (err, connection) {
         if (err) {
           connection.release();

@@ -74,6 +74,8 @@
 
                   <!-- File Uploads  -->
                   <label> File Uploads </label>
+
+                  <!-- All files received -->
                   <v-col cols="12" sm="12">
                     <v-file-input
                      v-if="editData[0].fileOPT === null || editData[0].fileOPT === ''"
@@ -99,37 +101,43 @@
                     ></v-file-input>
                   </v-col>
 
+
                   <v-col cols="12" sm="12">
                     <v-file-input
+                    v-if="editData[0].fileBank === null || editData[0].fileBank === ''"
                       v-model="editData[0].fileBank"
                       label="Bank Statement"
                       filled
                       hint="Bank Statement"
                       persistent-hint
                     ></v-file-input>
-                  </v-col>
+                  </v-col> 
 
-                  <v-col cols="12" sm="12">
+
+                   <v-col cols="12" sm="12">
                     <v-file-input
-                      v-model="filePaySlip"
+                    v-if="editData[0].filePaySlip === null || editData[0].filePaySlip === ''"
+                      v-model="editData[0].filePaySlip"
                       label="Payslip"
                       filled
                       multiple
                       hint="Up to 3 payslip pref"
                       persistent-hint
                     ></v-file-input>
-                  </v-col>
+                  </v-col> 
 
+                  
                   <v-col cols="12" sm="12">
                     <v-file-input
-                      v-model="fileFica"
+                    v-if="editData[0].fileFica === null || editData[0].fileFica === ''"
+                      v-model="editData[0].fileFica"
                       label="FICA"
                       filled
                       multiple
                       hint="FICA Documents"
                       persistent-hint
                     ></v-file-input>
-                  </v-col>
+                  </v-col> 
 
                 </v-row>
               </v-container>
@@ -208,6 +216,7 @@ export default {
       let data = {
         thisData: this.editData,
       };
+      console.log("OKAY2", this.editData);
 
       await axios({
         method: "post",
@@ -218,6 +227,7 @@ export default {
           console.log(response.data);
           // little box saying 'Posted Successfully
           this.snackbar = true;
+          console.log("ClientUpdate.vue - closing form");
           // close the form after completing
           this.closeClientInfo();
         },
