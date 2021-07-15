@@ -37,7 +37,6 @@
             <v-spacer></v-spacer>
             <v-toolbar-title>Sales</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-text-field prepend-icon="mdi-magnify" placholder ="Search" label="Search" v-model="search"></v-text-field>
             <!-- <v-btn icon @click="dialog = true">
             <v-icon>mdi-text-box-plus</v-icon>
           </v-btn> -->
@@ -45,7 +44,7 @@
 
           <v-list two-line>
             <v-list-item-group active-class="blue--text" multiple>
-              <template v-for="item in salesFiltered">
+              <template v-for="item in sales">
                 <v-list-item :key="item.id">
                   <v-list-item-content>
                     <div style="display: flex; justify-content: flex-start">
@@ -70,7 +69,7 @@
                         ><v-icon color="brown"> mdi-delete</v-icon></v-btn
                       >
                       <v-btn :id="item.id" text @click="editItem($event)"
-                        ><v-icon :color="item.iconColor"
+                        ><v-icon color="green"
                           >mdi-file-document-edit</v-icon
                         ></v-btn
                       >
@@ -205,27 +204,19 @@
       :editData="salesEditData"
       @closeForm="closeClientForm"
     />
-    <ClientFiles
-      v-if="clientFilesData.length > 0"
-      :dialogFiles="clientFileDialog"
-      :fileData="clientFilesData"
-      @closeForm="closeClientFiles"
-    />
-    <!-- :dialog="clientFileDialog" -->
   </v-container>
 </template>
 
 <script>
 import axios from "axios";
 import ClientUpdate from "../components/ClientUpdate.vue";
-import ClientFiles from "../components/ClientFiles.vue";
+
 // let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
 export default {
   name: "salesinfo",
   //name: "apartment",
   components: {
     ClientUpdate,
-    ClientFiles,
   },
   data() {
     return {
@@ -235,20 +226,13 @@ export default {
       items: [],
       blocks: [],
       clientDialog: false,
-
+      clientFileDialog: false,
       dialog: null,
-
+      dialogfiles: null,
       el: "#v-for-object",
       sales: [],
       url: "",
       salesEditData: [],
-      search: "",
-
-      // client Files dialog
-      clientFileDialog: false,
-      clientFilesData: [],
-      dialogFiles: null,
-
       // object: {
       //   id: "",
       //   firstName: "",
@@ -262,31 +246,6 @@ export default {
       //   fileOTP: "",
       // },
     };
-  },
-computed: {
-    salesFiltered() {
-      if (this.search === "") {
-        return this.sales;
-      } else {
-        return this.sales.filter(el => {
-          return (
-            !this.search ||
-            el.block
-              .toLowerCase()
-              .indexOf(this.search.toLowerCase()) > -1 ||
-            el.unit.toLowerCase().indexOf(this.search.toLowerCase()) >
-              -1 
-              ||
-            el.firstname.toLowerCase().indexOf(this.search.toLowerCase()) >
-              -1 
-            ||
-            el.lastname
-              .toLowerCase()
-              .indexOf(this.search.toLowerCase()) > -1       
-          );
-        });
-      }
-    }
   },
   async mounted() {
     // console.log("Connor", this.$store.state.development.id);
@@ -303,17 +262,6 @@ computed: {
       });
       console.log("salesEditData", this.salesEditData);
       this.clientDialog = true;
-    },
-    async checkAllFilesReceived() {
-      console.log("CheckForAllFiles");
-      this.clientFilesData = this.sales.filter((el) => {        
-        console.log("Elements of the clientFileData Array", el);
-        // check the elements if fileOTP has a value then check next file, if any don't have a value then set a boolean to false, which changes the colour of the edit button, it should only remain true if it passes all the checks 
-        //return el.id === parseInt(targetVal);
-      });
-      this.clientFilesData.forEach((el2) => {
-        console.log("Elements of the clientFileData Array", el2);
-      });
     },
     async initialData() {
       let data = {
@@ -334,15 +282,7 @@ computed: {
             this.sales = response.data;
             this.sales.forEach((el) => {
               el.fileOTPurl = `${this.url}/uploads/${el.fileOTP}`;
-              console.log("FileId",el.fileId)
-              if (el.fileOTP === "" || el.fileId === "" || el.fileBank === "" || el.filePaySlip === "" || el.fileFica === "") {
-                el.iconColor = "red"
-                } else {
-                  el.iconColor = "green"
-                }
-
             });
-            this.checkAllFilesReceived();
           },
           (error) => {
             console.log("the Error", error);
@@ -378,56 +318,23 @@ computed: {
         });
     },
     async showFiles(event) {
-      let targetVal = event.currentTarget.id;
-      console.log("Show Files: ", targetVal);
-      this.clientFilesData = this.sales.filter((el) => {
-        return el.id === parseInt(targetVal);
+      let targetId = event.currentTarget.id;
+      console.log(targetId);
+      this.clientFiles = this.sales.filter((el) => {
+        return el.id === parseInt(targetId);
       });
-      console.log("clientFilesData", this.clientFilesData);
+      console.log("clientFiles", this.clientFiles);
       this.clientFileDialog = true;
     },
-
-    //  if (this.fileOPT !== null) {
-    //     contains.push("fileOTP");
-    //     files.push(this.fileOPT) ; // append mimetype here?
-    //   }
-    //   if (this.fileId !== null) {
-    //     contains.push("fileId");
-    //     files.push(this.fileId);
-    //   }
-    //   if (this.fileBank !== null) {
-    //     contains.push("fileBank");
-    //     files.push(this.fileBank);
-    //   }
-    //   if (this.filePaySlip) {
-    //     this.filePaySlip.forEach((el) => {
-    //       contains.push("filePaySlip");
-    //       files.push(el);
-    //     });
-    //   } else {
-    //     console.log("No File");
-    //   }
-
-    //   if (this.fileFica) {
-    //     this.fileFica.forEach((el) => {
-    //       contains.push("fileFica");
-    //       files.push(el);
-    //     });
-    //   } else {
-    //     console.log("No File");
-    //   }
-  },
-  closeClientForm(event) {
-    this.clientDialog = event;
-  },
-  getClientInfo() {
-    this.clientDialog = !this.clientDialog;
-  },
-  getClientFiles() {
-    this.clientFileDialog = !this.clientFileDialog;
-  },
-  closeClientFiles(event) {
-    this.clientFileDialog = event;
+    closeClientForm(event) {
+      this.clientDialog = event;
+    },
+    getClientInfo() {
+      this.clientDialog = !this.clientDialog;
+    },
+    getClientFiles() {
+      this.clientFileDialog = !this.clientFileDialog;
+    },
   },
 };
 </script>

@@ -218,7 +218,9 @@ router.post("/getblocksForOptions", (req, res) => {
         // el.fileNameUpdated = `${el.fileName}.${filtered[0].mimetype.split("/")[1]}`
         el.fileNameUpdated = `${el.fileName}`
         fs.rename(`public/uploads/${el.originalName}`, `public/uploads/${el.fileNameUpdated}`, (err) => {
-          if (err) throw err
+          if (err) 
+          // fs.rename() 
+          //   throw err
           console.log("Done")
         } )
       })

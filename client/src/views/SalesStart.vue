@@ -1,10 +1,11 @@
 <template>
 <v-container>
   <div class="wrapper">
-    <v-row justify="center">
+    <!-- <v-row justify="center" persistent max-width="900px"> -->
+
     <div class="center">
       <pre>
-      <v-row class="text-center">
+      <v-row>
       <v-col cols="12">
           <div class="centerimg">
           <!-- image in assets/unfurnished-flat.jpg -->
@@ -57,7 +58,7 @@
       :dialog="clientDialog"
       @closeForm="closeClientForm"
     />
-     </v-row>
+     <!-- </v-row> -->
   </div>
  
   </v-container>
