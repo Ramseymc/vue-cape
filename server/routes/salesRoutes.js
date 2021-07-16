@@ -157,7 +157,7 @@ router.post("/getblocksForOptions", (req, res) => {
             
           } else {
             console.log("_UPDATE SUCCESS");
-            //res.json(result);
+            res.json(result);
           }
         });
         connection.release();
@@ -220,8 +220,10 @@ router.post("/getblocksForOptions", (req, res) => {
         fs.rename(`public/uploads/${el.originalName}`, `public/uploads/${el.fileNameUpdated}`, (err) => {
           if (err) 
           // fs.rename() 
-          //   throw err
-          console.log("Done")
+             throw err
+
+            
+          //console.log("Done")
         } )
       })
       // [Error: ENOENT: no such file or directory, rename 'F:\cape\vue-cape\server\public\uploads\cf2658a467d22c74d56725cb912707cd.pdf' -> 'F:\cape\vue-cape\server\public\uploads\undefined'] {

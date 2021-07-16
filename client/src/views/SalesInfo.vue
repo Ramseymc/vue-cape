@@ -37,7 +37,12 @@
             <v-spacer></v-spacer>
             <v-toolbar-title>Sales</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-text-field prepend-icon="mdi-magnify" placholder ="Search" label="Search" v-model="search"></v-text-field>
+            <v-text-field
+              prepend-icon="mdi-magnify"
+              placholder="Search"
+              label="Search"
+              v-model="search"
+            ></v-text-field>
             <!-- <v-btn icon @click="dialog = true">
             <v-icon>mdi-text-box-plus</v-icon>
           </v-btn> -->
@@ -71,14 +76,18 @@
                       >
                       <v-btn :id="item.id" text @click="editItem($event)"
                         ><v-icon :color="item.iconColor"
-                          >mdi-file-document-edit</v-icon
+                          >mdi-table-edit</v-icon
                         ></v-btn
                       >
+
+                      <!-- Connor -->
+                      <v-btn :id="item.id" text @click="emailItem($event)"
+                        ><v-icon color="blue">mdi-email-outline</v-icon></v-btn
+                      >
+
                       <!-- // button for file uploads dialog -->
                       <v-btn :id="item.id" text @click="showFiles($event)"
-                        ><v-icon color="yellow"
-                          >mdi-file-document-edit</v-icon
-                        ></v-btn
+                        ><v-icon color="black">mdi-eye</v-icon></v-btn
                       >
 
                       <!-- Build the files Dialog into a seperate component like the clientInfo one -->
@@ -249,6 +258,7 @@ export default {
       clientFilesData: [],
       dialogFiles: null,
 
+      // closeClientFiles: false,
       // object: {
       //   id: "",
       //   firstName: "",
@@ -263,30 +273,23 @@ export default {
       // },
     };
   },
-computed: {
+  computed: {
     salesFiltered() {
       if (this.search === "") {
         return this.sales;
       } else {
-        return this.sales.filter(el => {
+        return this.sales.filter((el) => {
           return (
             !this.search ||
-            el.block
-              .toLowerCase()
-              .indexOf(this.search.toLowerCase()) > -1 ||
-            el.unit.toLowerCase().indexOf(this.search.toLowerCase()) >
-              -1 
-              ||
+            el.block.toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
+            el.unit.toLowerCase().indexOf(this.search.toLowerCase()) > -1 ||
             el.firstname.toLowerCase().indexOf(this.search.toLowerCase()) >
-              -1 
-            ||
-            el.lastname
-              .toLowerCase()
-              .indexOf(this.search.toLowerCase()) > -1       
+              -1 ||
+            el.lastname.toLowerCase().indexOf(this.search.toLowerCase()) > -1
           );
         });
       }
-    }
+    },
   },
   async mounted() {
     // console.log("Connor", this.$store.state.development.id);
@@ -296,25 +299,38 @@ computed: {
   },
   methods: {
     editItem(event) {
-      let targetId = event.currentTarget.id;
-      console.log(targetId);
+      let targetId = event.currentTarget.id;//Spot on
+      console.log("EDIT ITEM ID",targetId);
       this.salesEditData = this.sales.filter((el) => {
         return el.id === parseInt(targetId);
       });
       console.log("salesEditData", this.salesEditData);
       this.clientDialog = true;
     },
-    async checkAllFilesReceived() {
-      console.log("CheckForAllFiles");
-      this.clientFilesData = this.sales.filter((el) => {        
-        console.log("Elements of the clientFileData Array", el);
-        // check the elements if fileOTP has a value then check next file, if any don't have a value then set a boolean to false, which changes the colour of the edit button, it should only remain true if it passes all the checks 
-        //return el.id === parseInt(targetVal);
+    emailItem(event) {
+      let targetId = event.currentTarget.id;
+      console.log(targetId);
+      console.log("Email Item SalesEditData = ", this.salesEditData);
+
+      
+
+      this.salesEditData = this.sales.filter((el) => {
+        return el.id === parseInt(targetId);
       });
-      this.clientFilesData.forEach((el2) => {
-        console.log("Elements of the clientFileData Array", el2);
-      });
+      console.log("salesEditData", this.salesEditData);
+      this.clientDialog = true;
     },
+    // async checkAllFilesReceived() {
+    //   console.log("CheckForAllFiles");
+    //   this.clientFilesData = this.sales.filter((el) => {
+    //     console.log("Elements of the clientFileData Array", el);
+    //     // check the elements if fileOTP has a value then check next file, if any don't have a value then set a boolean to false, which changes the colour of the edit button, it should only remain true if it passes all the checks
+    //     //return el.id === parseInt(targetVal);
+    //   });
+    //   this.clientFilesData.forEach((el2) => {
+    //     console.log("Elements of the clientFileData Array", el2);
+    //   });
+    // },
     async initialData() {
       let data = {
         id: "",
@@ -334,15 +350,20 @@ computed: {
             this.sales = response.data;
             this.sales.forEach((el) => {
               el.fileOTPurl = `${this.url}/uploads/${el.fileOTP}`;
-              console.log("FileId",el.fileId)
-              if (el.fileOTP === "" || el.fileId === "" || el.fileBank === "" || el.filePaySlip === "" || el.fileFica === "") {
-                el.iconColor = "red"
-                } else {
-                  el.iconColor = "green"
-                }
-
+              console.log("FileId", el.fileId);
+              if (
+                el.fileOTP === "" ||
+                el.fileId === "" ||
+                el.fileBank === "" ||
+                el.filePaySlip === "" ||
+                el.fileFica === ""
+              ) {
+                el.iconColor = "red";
+              } else {
+                el.iconColor = "green";
+              }
             });
-            this.checkAllFilesReceived();
+            //this.checkAllFilesReceived();
           },
           (error) => {
             console.log("the Error", error);
@@ -386,7 +407,24 @@ computed: {
       console.log("clientFilesData", this.clientFilesData);
       this.clientFileDialog = true;
     },
+    async sendEmail(event) {
+      let targetVal = event.currentTarget.id;
+      console.log("Email Sale Info, targetID: ", targetVal)
+    },
 
+    closeClientForm(event) {
+      this.clientDialog = event;
+    },
+    getClientInfo() {
+      this.clientDialog = !this.clientDialog;
+    },
+    getClientFiles() {
+      this.clientFileDialog = !this.clientFileDialog;
+    },
+    closeClientFiles(event) {
+      console.log("THE EVENT", event);
+      this.clientFileDialog = event;
+    },
     //  if (this.fileOPT !== null) {
     //     contains.push("fileOTP");
     //     files.push(this.fileOPT) ; // append mimetype here?
@@ -416,18 +454,6 @@ computed: {
     //   } else {
     //     console.log("No File");
     //   }
-  },
-  closeClientForm(event) {
-    this.clientDialog = event;
-  },
-  getClientInfo() {
-    this.clientDialog = !this.clientDialog;
-  },
-  getClientFiles() {
-    this.clientFileDialog = !this.clientFileDialog;
-  },
-  closeClientFiles(event) {
-    this.clientFileDialog = event;
   },
 };
 </script>

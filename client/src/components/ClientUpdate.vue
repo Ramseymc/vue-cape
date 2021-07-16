@@ -185,26 +185,26 @@ export default {
     return {
       snackbar: false,
       snackBarmessage: "Successfully Posted!!",
-      // firstName: "",
-      // lastName: "",
-      // iDNumber: "",
-      // email: "",
-      // bankName: "",
-      // accountNumber: "",
-      // accountType: "",
-      // fileOPT: null,
-      // fileId: null,
-      // fileBank: null,
-      // filePaySlip: null,
-      // fileFica: null,
       url: "",
+      // finalEditData: {}
     };
   },
+  beforeMount(){
+    console.log("BEFORE MOUNTED")
+    //  this.finalEditData = this.editData[0]
+     this.editData.forEach((el) => {
+       el.id = el.id.toString()
+     })
+    },
+
   mounted() {
     this.url = this.$store.state.url;
-    setTimeout(
-      () => { console.log("OKAY", this.editData); }, 
-      1000);
+    // this.finalEditData = this.editData
+    // setTimeout(
+    //   () => { 
+        console.log("ClientUpdate Mounted EditData= ", this.editData); 
+      //   }, 
+      // 1000);
   },
 
   methods: {
@@ -216,8 +216,8 @@ export default {
       let data = {
         thisData: this.editData,
       };
-      console.log("OKAY2", this.editData);
-
+      // console.log("OKAY2", this.editData);
+// Vue warn]: Invalid prop: custom validator check failed for prop "value"
       await axios({
         method: "post",
         url: `${this.url}/updateClient`,
@@ -225,7 +225,7 @@ export default {
       }).then(
         (response) => {
           console.log(response.data);
-          // little box saying 'Posted Successfully
+ 
           this.snackbar = true;
           console.log("ClientUpdate.vue - closing form");
           // close the form after completing
