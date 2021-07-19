@@ -5,7 +5,7 @@
       <v-row justify="center">
         <v-dialog         
           v-model="dialogFiles"
-          max-width="400px"
+          max-width="500px"
         >
           <v-card>
             <v-card-title>
@@ -16,19 +16,18 @@
                 <v-row>
 
                   <!-- change v-text-field to labels or spans (text only) -->
-                  <!-- Connor -->
-                                 <!-- v-if="fileData[0].fileOPT !== null && fileData[0].fileOPT !== '' && fileData[0].fileOPT !== undefined" -->
+                  <!-- CRM 1: Why are all links redering even when receiving blank data? (should be hitting the logic) -->                                
                   <v-col cols="12" sm="8" md="8" 
                     v-model="fileData[0].fileOPT"
                     v-if="fileData[0].fileOPT !== null || fileData[0].fileOPT !== '' || fileData[0].fileOPT !== undefined"
                   >
-                    <v-text-field                                         
+                    <!-- <v-text-field                                         
                       label="OTP*"
                       required
         
-                    ></v-text-field>
-                  </v-col>
-                  
+                    ></v-text-field> -->
+                    <span> OTP </span> 
+                  </v-col>                  
                   <v-col cols="12" sm="2" md="2">
                     <a :href="`${url}${fileData[0].fileOTP}`"
                         v-if="fileData[0].fileOPT !== null || fileData[0].fileOPT !== '' || fileData[0].fileOPT !== undefined"    
@@ -39,17 +38,21 @@
                     </a>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field
+                  <v-col cols="12" sm="8" md="8" 
+                    v-model="fileData[0].fileId"
+                    v-if="fileData[0].fileId !== null || fileData[0].fileId !== '' || fileData[0].fileId !== undefined"
+                  >
+                    <!-- <v-text-field
                       v-if="!fileData[0].fileId === null || !fileData[0].fileId === ''"
                       v-model="fileIdlbl"
                       label="ID*"
                       required
-                    ></v-text-field>
+                    ></v-text-field> -->
+                    <span>ID/Passport </span> 
                   </v-col>
-                  <v-col cols="12" sm="6" md="6">
+                  <v-col cols="12" sm="2" md="2">
                     <a :href="fileData[0].fileId" 
-                        v-if="!fileData[0].fileId === null || !fileData[0].fileId === ''"
+                        v-if="fileData[0].fileId !== null || fileData[0].fileId !== '' || fileData[0].fileId !== undefined"
                         download 
                         target 
                         style="text-decoration: none;">
@@ -57,17 +60,21 @@
                     </a>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field
+                  <v-col cols="12" sm="8" md="8" 
+                    v-model="fileData[0].fileBank"
+                    v-if="fileData[0].fileBank !== null || fileData[0].fileBank !== '' || fileData[0].fileBank !== undefined"
+                  >
+                    <!-- <v-text-field
                       v-if="!fileData[0].fileBank === null || !fileData[0].fileBank === ''"
                       v-model="fileBanklbl"
                       label="Bank Statement*"
                       required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6">
+                    ></v-text-field> -->
+                    <span>Bank Statement</span>
+                  </v-col>                  
+                  <v-col cols="12" sm="2" md="2">
                     <a :href="fileData[0].fileBank" 
-                        v-if="!fileData[0].fileBank === null || !fileData[0].fileBank === ''"
+                        v-if="fileData[0].fileBank !== null || fileData[0].fileBank !== '' || fileData[0].fileBank !== undefined"
                         download 
                         target 
                         style="text-decoration: none;">
@@ -75,17 +82,21 @@
                     </a>
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field
+                  <v-col cols="12" sm="8" md="8" 
+                    v-model="fileData[0].filePaySlip"
+                    v-if="fileData[0].filePaySlip !== null || fileData[0].filePaySlip !== '' || fileData[0].filePaySlip !== undefined"
+                  >
+                    <!-- <v-text-field
                       v-if="!fileData[0].filePaySlip === null || !fileData[0].filePaySlip === ''"
                       v-model="filePaySliplbl"
                       label="Payslip/s"
                       required
-                    ></v-text-field>
+                    ></v-text-field> -->
+                    <span>Payslip/s</span>
                   </v-col>                   
-                  <v-col cols="12" sm="6" md="6">
+                  <v-col cols="12" sm="2" md="2">
                     <a :href="fileData[0].filePaySlip" 
-                        v-if="!fileData[0].filePaySlip === null || !fileData[0].filePaySlip === ''"
+                        v-if="fileData[0].filePaySlip !== null || fileData[0].filePaySlip !== '' || fileData[0].filePaySlip !== undefined"
                         download 
                         target 
                         style="text-decoration: none;">
@@ -93,17 +104,21 @@
                     </a>                  
                   </v-col>
 
-                  <v-col cols="12" sm="6" md="6">
-                    <v-text-field
+                  <v-col cols="12" sm="8" md="8" 
+                    v-model="fileData[0].fileFica"
+                    v-if="fileData[0].fileFica !== null || fileData[0].fileFica !== '' || fileData[0].fileFica !== undefined"
+                  >
+                    <!-- <v-text-field
                       v-if="!fileData[0].fileFica === null || !fileData[0].fileFica === ''"
                       v-model="fileFicalbl"
                       label="FICA Docs*"
                       required
-                    ></v-text-field>
+                    ></v-text-field> -->
+                    <span> FICA Files </span>
                   </v-col>
-                  <v-col cols="12" sm="6" md="6">
+                  <v-col cols="12" sm="2" md="2">
                     <a :href="fileData[0].fileFica" 
-                        v-if="!fileData[0].fileFica === null || !fileData[0].fileFica === ''"
+                        v-if="fileData[0].fileFica !== null || fileData[0].fileFica !== '' || fileData[0].fileFica !== undefined"
                         download 
                         target 
                         style="text-decoration: none;">

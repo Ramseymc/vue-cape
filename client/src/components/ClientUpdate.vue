@@ -71,9 +71,9 @@
                       required
                     ></v-text-field>
                   </v-col>
-
+                  <small>*indicates required field</small>
                   <!-- File Uploads  -->
-                  <label> File Uploads </label>
+                 
 
                   <!-- All files received -->
                   <v-col cols="12" sm="12">
@@ -141,7 +141,7 @@
 
                 </v-row>
               </v-container>
-              <small>*indicates required field</small>
+              
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>

@@ -141,7 +141,9 @@ router.post("/getblocksForOptions", (req, res) => {
        accountNumber='${req.body.thisData[0].accountNumber}',
        accountType='${req.body.thisData[0].accountType}',
        block='${req.body.thisData[0].block}',
-       unit='${req.body.thisData[0].unit}'
+       unit='${req.body.thisData[0].unit}',
+       salesEmailSent='${req.body.thisData[0].salesEmailSent}',
+       dateCreated=""
       WHERE id='${req.body.thisData[0].id}'`
 
       console.log("mySQL = ", mysql);
@@ -165,31 +167,89 @@ router.post("/getblocksForOptions", (req, res) => {
 
   })
 
+  router.post("/sendSalesInfoEmail", (req, res) => {
+    //let mysql = `select first_name, last_name, emailAddress from suppliers where contactID = '${req.body.supplier}'`;
+    //let filename = req.body.PONumber;
+    console.log("XXXX",req.body)
+    let subject = "New Sales Agreement Signed"
+    let recipient = "connorm11111@gmail.com"
+    // ${req.body.info[0].firstname} ${req.body.info[0].firstname}
+    
+          // The following documents have been received
+         let output = `Dear Debbie/Donovan,
+          Please find the attached information regarding a client sale;
+          <br><br><br>
+          
+          <strong> 
+            First Name: ${req.body.info[0].firstname} 
+            <br>
+            Last Name: ${req.body.info[0].lastname}
+            <br>
+            Block: ${req.body.info[0].block}
+            <br>
+            Unit: ${req.body.info[0].unit}
+          </strong>
+          
+          <br><br>          
+          Kind regards
+          <br><br>
+  
+          <strong>Sales Sytem</strong><br>
+          Oppurtunity Private Capital<br>
+          CPC<br><br>
+          `;
+
+        sendMail(subject, recipient, output)
+        .then(() => {
+          let mysql = `update salesinfo set salesEmailSent = Y where id = '${req.body.info[0].id}'`;
+          console.log(chalk.blue(mysql));
+          connection.query(mysql, function (error, result) {
+            if (error) {
+              console.log("THE ERROR", error);
+            } else {
+              console.log(result);
+              res.json({
+                success: true,
+                hello: "Goodbye",
+                fileName: recipient,
+              });
+            }
+          });
+        })
+        .catch((e) => {
+          res.json({ success: false });
+        });
+    connection.release();
+  },
+    
+  async function sendMail(subject, recipient, output) {
+    let mailOptions = {
+      from: "Cape Projects Construction <wayne@eccentrictoad.com>",
+      to: `${recipient}`,
+      cc: ["waynebruton@icloud.com"],
+      subject: `${subject}`,
+      text: "Hello world?",
+      html: output,
+      // attachments: [
+      //   {
+      //     filename: `${filename}.pdf`,
+      //     path: `public/purchaseorders/${filename}.pdf`, // stream this file
+      //   },
+      // ],
+    };
+  
+    await transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error with connection", error);
+      }
+    });
+  },
   
   router.post("/createClient", upload.array("documents"), (req, res) => {
   
       // pull the mimetype from req.files - futureproof
       let fileDetails = []
-      let contains = req.body.contains.split(",") 
-      console.log("FILES",req.files)
-
-      // go through contains, and get the matching file, insert it into the fileDetails array
-      // contains.forEach((el, index) => {
-      //   let fileType = el
-      //   if (el !== null) {
-      //     var fileExt = req.files[index].mimetype.substr(req.files[index].mimetype.indexOf('/') + 1, req.files[index].mimetype.length - req.files[index].mimetype.indexOf('/'))                
-      //     var fileN = req.files[index].filename
-      //     let fileName = req.files[index].filename
-      //     if (fileN.indexOf(fileExt) > 0) {
-      //       fileName = req.files[index].filename + "." + fileExt //Add MimeType (pdf/jpg etc)
-      //     }         
-      //     let insert = {
-      //         fileType: fileType,
-      //         fileName: fileName 
-      //       }
-      //       fileDetails.push(insert)
-      //   }
-      // })
+      let contains = req.body.contains.split(",")       
 
       contains.forEach((el) => {
         req.files.forEach((el2) => {
@@ -204,10 +264,7 @@ router.post("/getblocksForOptions", (req, res) => {
           // }
            
         })
-      })
-      console.log(fileDetails)    
-
-      // [Error: ENOENT: no such file or directory, rename 'F:\cape\vue-cape\server\public\uploads\ec69a89eaf0f85dc0bce529fbe8b36d2.pdf' -> 'F:\cape\vue-cape\server\public\uploads\ec69a89eaf0f85dc0bce529fbe8b36d2.pdf.pdf'] {
+      })          
 
       // rename the uploaded file with the correct extension
       // ** NOTE: I can remove the fileExt / fileN substr check
@@ -218,16 +275,11 @@ router.post("/getblocksForOptions", (req, res) => {
         // el.fileNameUpdated = `${el.fileName}.${filtered[0].mimetype.split("/")[1]}`
         el.fileNameUpdated = `${el.fileName}`
         fs.rename(`public/uploads/${el.originalName}`, `public/uploads/${el.fileNameUpdated}`, (err) => {
-          if (err) 
-          // fs.rename() 
-             throw err
-
-            
-          //console.log("Done")
+          if (err)           
+             throw err                      
         } )
       })
-      // [Error: ENOENT: no such file or directory, rename 'F:\cape\vue-cape\server\public\uploads\cf2658a467d22c74d56725cb912707cd.pdf' -> 'F:\cape\vue-cape\server\public\uploads\undefined'] {
-        
+             
       let fileFica;
       let fileOTP;
       let filePaySlip;
@@ -297,9 +349,7 @@ router.post("/getblocksForOptions", (req, res) => {
                 '${fileBank}','${filePaySlip}','${fileFica}'
       );`
 
-            console.log(chalk.red(mysql))
-
-
+      console.log(chalk.red(mysql))
 
       pool.getConnection(function (err, connection) {
         if (err) {
@@ -318,5 +368,18 @@ router.post("/getblocksForOptions", (req, res) => {
         connection.release();
       });     
   })
+
+  let transporter = nodemailer.createTransport({
+    host: process.env.MAILHOST,
+    port: 465, //587
+    secure: true,
+    auth: {
+      user: process.env.MAILUSER,
+      pass: process.env.MAILPASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
 
 module.exports = router;

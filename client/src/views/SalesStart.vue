@@ -1,4 +1,5 @@
 <template>
+<!-- CRM 3: Fix centering on this page -->
 <v-container>
   <div class="wrapper">
     <!-- <v-row justify="center" persistent max-width="900px"> -->
@@ -47,7 +48,14 @@
       </v-row>
       </pre>
       <div>
-        <v-btn v-if="blockValue && unitValue" text @click="getClientInfo"
+        <v-btn v-if="blockValue && unitValue" 
+          text 
+          @click="getClientInfo" 
+          color="primary"
+          elevation="3"
+          large
+          outlined
+          rounded
           >Create Sale</v-btn
         >
       </div>
