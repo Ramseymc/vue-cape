@@ -1,56 +1,100 @@
 <template>
-<!-- CRM 3: Fix centering on this page -->
-<v-container>
-  <div class="wrapper">
-    <!-- <v-row justify="center" persistent max-width="900px"> -->
+  <!-- CRM 3: Fix centering on this page -->
+  <!-- <v-container> -->
+  <!-- <div class="wrapper"> -->
+  <!-- <v-row justify="center" persistent max-width="900px"> -->
 
-    <div class="center">
-      <pre>
-      <v-row>
-      <v-col cols="12">
-          <div class="centerimg">
-          <!-- image in assets/unfurnished-flat.jpg -->
-          <v-img    class="mx-auto"                    
-              :src="flatPic"
-              max-height = '240'          
-            ></v-img>
-          </div>
-          </v-col>
-                  <v-col cols="6">    
-          <div>
-            <v-autocomplete class="mx-auto"
-              v-model="blockValue"
-              :items="blocks"
-              dense
-              filled
-              item-text="subsectionName"
-              label="Choose Block"
-              @change="chooseUnit"
-            ></v-autocomplete>
-          </div>  
-            </v-col>    
+  <!-- <div class="center">
+      <pre> -->
+  <div>
+    <!-- </div> -->
+    <ClientInfo
+      :blockValue="blockValue"
+      :unitValue="unitValue"
+      :dialog="clientDialog"
+      @closeForm="closeClientForm"
+    />
+    <!-- </v-row> -->
+    <!-- </div> -->
+
+    <!-- </v-container> -->
+    <!-- </div> -->
+
+    <!-- <div> -->
+    <v-card class="mx-auto" max-width="100vw">
+      <!-- <template slot="progress">
+        <v-progress-linear
+          color="#bc9654"
+          height="10"
+          indeterminate
+        ></v-progress-linear>
+      </template> -->
+      <v-img height="350" :src="flatPic"></v-img>
+
+      <v-card-title>Choose your options</v-card-title>
+
+      <v-card-text>
+        <div style="display: flex">
+          <v-autocomplete
+            v-model="blockValue"
+            :items="blocks"
+            dense
+            filled
+            item-text="subsectionName"
+            label="Choose Block"
+            @change="chooseUnit"
+          ></v-autocomplete>
+        </div>
+        <div>
+          <v-autocomplete
+            v-model="unitValue"
+            :items="items"
+            dense
+            filled
+            item-text="unitName"
+            label="Choose Unit"
+          ></v-autocomplete>
+        </div>
+
+        <!--     
+        <v-stepper alt-labels non-linear>
+          <v-stepper-header>
+            <v-stepper-step step="1" complete color="red"> OTP </v-stepper-step>
+
+            <v-divider></v-divider>
             
-          <v-col cols="6">
-          <div>
-            <v-autocomplete class="mx-auto"
-              v-model="unitValue"
-              :items="items"
-              dense
-              filled
-              item-text="unitName"
-              label="Choose Unit"
-            ></v-autocomplete>
-          </div>    
-            </v-col>
-       
-         
-        
-      </v-row>
-      </pre>
-      <div>
-        <v-btn v-if="blockValue && unitValue" 
-          text 
-          @click="getClientInfo" 
+            <v-stepper-step
+              step="2"
+              color="amber"
+              editable
+              :complete="bondApproved"
+              @click="bondApproval"
+            >
+              Bond Approved
+            </v-stepper-step>
+
+            <v-divider></v-divider>
+
+            <v-stepper-step
+              step="3"
+              color="green"
+              editable
+              :complete="documentsSigned"
+              @click="docsSigned"
+            >
+              Final Docs Signed
+            </v-stepper-step>
+          </v-stepper-header>
+        </v-stepper> -->
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <!-- <div> -->
+        <!-- <v-spacer></v-spacer> -->
+        <v-btn
+          v-if="blockValue && unitValue"
+          text
+          @click="getClientInfo"
           color="primary"
           elevation="3"
           large
@@ -58,18 +102,13 @@
           rounded
           >Create Sale</v-btn
         >
-      </div>
-    </div>
-    <ClientInfo
-      :blockValue="blockValue"
-      :unitValue="unitValue"
-      :dialog="clientDialog"
-      @closeForm="closeClientForm"
-    />
-     <!-- </v-row> -->
+        <!-- </div> -->
+        <v-spacer></v-spacer>
+      </v-card-actions>
+
+      <v-divider class="mx-4"></v-divider>
+    </v-card>
   </div>
- 
-  </v-container>
 </template>
 
 <script>
@@ -134,28 +173,28 @@ export default {
         id: this.$store.state.development.id,
         subsection: filteredData[0].id,
         subsectionName: filteredData[0].subsectionName,
-        //subsectionName: 
+        //subsectionName:
       };
-      console.log("filteredData for getting subsectionname:",filteredData),
-      await axios({
-        method: "post",
-        url: `http://localhost:3000/getUnitsForOptions`,
-        data: data,
-      })
-        .then(
-          (response) => {
-            let filteredData = response.data.filter((el) => {
-              return el.unitName.substring(2, 1) !== ".";
-            });
-            this.items = filteredData;
-          },
-          (error) => {
-            console.log(error);
-          }
-        )
-        .catch((e) => {
-          console.log(e);
-        });
+      console.log("filteredData for getting subsectionname:", filteredData),
+        await axios({
+          method: "post",
+          url: `http://localhost:3000/getUnitsForOptions`,
+          data: data,
+        })
+          .then(
+            (response) => {
+              let filteredData = response.data.filter((el) => {
+                return el.unitName.substring(2, 1) !== ".";
+              });
+              this.items = filteredData;
+            },
+            (error) => {
+              console.log(error);
+            }
+          )
+          .catch((e) => {
+            console.log(e);
+          });
     },
   },
 };

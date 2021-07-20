@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <div class="about">
-      <br />  <br />
+      <br />
+      <br />
       <v-row justify="center">
         <v-dialog v-model="dialog" persistent max-width="900px">
           <v-card>
@@ -25,7 +26,7 @@
                       required
                     ></v-text-field>
                   </v-col>
-             
+
                   <v-col cols="12">
                     <v-text-field
                       v-model="editData[0].iDNumber"
@@ -62,7 +63,7 @@
                       required
                       chips
                     ></v-autocomplete>
-                  </v-col>       
+                  </v-col>
 
                   <v-col cols="12" sm="12">
                     <v-text-field
@@ -73,13 +74,17 @@
                   </v-col>
                   <small>*indicates required field</small>
                   <!-- File Uploads  -->
-                 
 
                   <!-- All files received -->
                   <v-col cols="12" sm="12">
                     <v-file-input
-                     v-if="editData[0].fileOPT === null || editData[0].fileOPT === ''"
-                      v-model="editData[0].fileOPT"
+                      v-if="
+                        editData[0].fileOTP === null ||
+                        editData[0].fileOTP === '' ||
+                        editData[0].fileOTP === 'undefined' 
+
+                      "
+                      v-model="fileOTP"
                       label="OPT"
                       accept="image/png, image/jpeg, image/bmp, image/jpg, application/pdf"
                       filled
@@ -90,9 +95,12 @@
 
                   <v-col cols="12" sm="12">
                     <v-file-input
-                    v-if="editData[0].fileId === null || editData[0].fileId === ''"
-                      v-model="editData[0].fileId"
-
+                      v-if="
+                        editData[0].fileId === null || 
+                        editData[0].fileId === '' ||
+                        editData[0].fileId === 'undefined'
+                      "
+                      v-model="fileId"
                       label="ID/Passport"
                       filled
                       hint="ID/Passport Photo"
@@ -101,61 +109,76 @@
                     ></v-file-input>
                   </v-col>
 
-
                   <v-col cols="12" sm="12">
                     <v-file-input
-                    v-if="editData[0].fileBank === null || editData[0].fileBank === ''"
-                      v-model="editData[0].fileBank"
+                      v-if="
+                        editData[0].fileBank === null ||
+                        editData[0].fileBank === '' ||
+                        editData[0].fileBank === 'undefined' 
+
+                      "
+                      v-model="fileBank"
                       label="Bank Statement"
                       filled
                       hint="Bank Statement"
                       persistent-hint
                     ></v-file-input>
-                  </v-col> 
+                  </v-col>
 
-
-                   <v-col cols="12" sm="12">
+                  <v-col cols="12" sm="12">
                     <v-file-input
-                    v-if="editData[0].filePaySlip === null || editData[0].filePaySlip === ''"
-                      v-model="editData[0].filePaySlip"
+                      v-if="
+                        editData[0].filePaySlip === null ||
+                        editData[0].filePaySlip === '' ||
+                        editData[0].filePaySlip === 'undefined'
+
+                      "
+                      v-model="filePaySlip"
                       label="Payslip"
                       filled
                       multiple
                       hint="Up to 3 payslip pref"
                       persistent-hint
                     ></v-file-input>
-                  </v-col> 
+                  </v-col>
 
-                  
                   <v-col cols="12" sm="12">
                     <v-file-input
-                    v-if="editData[0].fileFica === null || editData[0].fileFica === ''"
-                      v-model="editData[0].fileFica"
+                      v-if="
+                        editData[0].fileFica === null ||
+                        editData[0].fileFica === '' ||
+                        editData[0].fileFica === 'undefined' 
+                      "
+                      v-model="fileFica"
                       label="FICA"
                       filled
                       multiple
                       hint="FICA Documents"
                       persistent-hint
                     ></v-file-input>
-                  </v-col> 
-
+                  </v-col>
                 </v-row>
               </v-container>
-              
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn 
-                color="blue darken-1" 
-                text 
+              <v-btn
+                text
                 @click="closeClientInfo"
+                color="primary"
+                elevation="3"
+                outlined
+                rounded
               >
                 Close
               </v-btn>
-              <v-btn 
-                color="blue darken-1" 
-                text 
+              <v-btn
+                text
                 @click="updateClientData"
+                color="primary"
+                elevation="3"
+                outlined
+                rounded
               >
                 Save
               </v-btn>
@@ -186,25 +209,30 @@ export default {
       snackbar: false,
       snackBarmessage: "Successfully Posted!!",
       url: "",
+       fileOPT: null,
+      fileId: null,
+      fileBank: null,
+      filePaySlip: null,
+      fileFica: null,
       // finalEditData: {}
     };
   },
-  beforeMount(){
-    console.log("BEFORE MOUNTED")
+  beforeMount() {
+    console.log("BEFORE MOUNTED");
     //  this.finalEditData = this.editData[0]
-     this.editData.forEach((el) => {
-       el.id = el.id.toString()
-     })
-    },
+    this.editData.forEach((el) => {
+      el.id = el.id.toString();
+    });
+  },
 
   mounted() {
     this.url = this.$store.state.url;
     // this.finalEditData = this.editData
     // setTimeout(
-    //   () => { 
-        console.log("ClientUpdate Mounted EditData= ", this.editData); 
-      //   }, 
-      // 1000);
+    //   () => {
+    console.log("ClientUpdate Mounted EditData= ", this.editData);
+    //   },
+    // 1000);
   },
 
   methods: {
@@ -213,19 +241,83 @@ export default {
     },
     async updateClientData() {
       // get the form fields data to pass to salesRoutes /updateClient
-      let data = {
-        thisData: this.editData,
-      };
-      // console.log("OKAY2", this.editData);
-// Vue warn]: Invalid prop: custom validator check failed for prop "value"
+    
+
+        let files = [];
+      let contains = [];
+      if (this.fileOPT !== null) {
+        contains.push("fileOTP");
+        files.push(this.fileOPT); // append mimetype here?
+      }
+      if (this.fileId !== null) {
+        contains.push("fileId");
+        files.push(this.fileId);
+      }
+      if (this.fileBank !== null) {
+        contains.push("fileBank");
+        files.push(this.fileBank);
+      }
+      if (this.filePaySlip) {
+        this.filePaySlip.forEach((el) => {
+          contains.push("filePaySlip");
+          files.push(el);
+        });
+      } else {
+        console.log("No File");
+      }
+
+      if (this.fileFica) {
+        this.fileFica.forEach((el) => {
+          contains.push("fileFica");
+          files.push(el);
+        });
+      } else {
+        console.log("No File");
+      }
+
+      console.log("contains",contains)
+
+       let formData = new FormData();
+
+
+      console.log("files",files);
+
+      //   let data = {
+      //   thisData: this.editData,
+      // };
+        for (var x = 0; x < files.length; x++) {
+        formData.append("documents", files[x]);
+        // + '.' + files[x].type);  // append mimetype here?
+        // the type var holds 'application/pdf' so I need only the pdf part
+        console.log("FileInfo::: ", files[x]);
+      }
+       formData.append("firstName", this.editData[0].firstname);
+      formData.append("lastName", this.editData[0].lastname);
+      formData.append("iDNumber", this.editData[0].iDNumber);
+      formData.append("email", this.editData[0].email);
+      formData.append("bankName", this.editData[0].bankName);
+      formData.append("accountNumber", this.editData[0].accountNumber);
+      formData.append("accountType", this.editData[0].accountType);
+      formData.append("block", this.editData[0].block);
+      formData.append("unit", this.editData[0].unit);
+      formData.append("id", this.editData[0].id);
+      formData.append("contains", contains);
+
+  
+
+// formData.append("contains", contains);
+
+
+      console.log("OKAY2", this.editData);
+      // Vue warn]: Invalid prop: custom validator check failed for prop "value"
       await axios({
         method: "post",
         url: `${this.url}/updateClient`,
-        data: data,
+        data: formData,
       }).then(
         (response) => {
           console.log(response.data);
- 
+
           this.snackbar = true;
           console.log("ClientUpdate.vue - closing form");
           // close the form after completing
