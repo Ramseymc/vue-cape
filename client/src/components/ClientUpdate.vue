@@ -239,6 +239,7 @@ export default {
     closeClientInfo() {
       this.$emit("closeForm", false);
     },
+    
     async updateClientData() {
       // get the form fields data to pass to salesRoutes /updateClient
     
@@ -277,8 +278,7 @@ export default {
 
       console.log("contains",contains)
 
-       let formData = new FormData();
-
+      let formData = new FormData();
 
       console.log("files",files);
 

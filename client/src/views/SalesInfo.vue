@@ -38,30 +38,68 @@
                       ></v-list-item-subtitle>
                     </div>
                   </v-list-item-content>
-                  <v-list-item-action>
-                    <div>
-                      <v-btn :id="item.id" text @click="deleteItem($event)"
-                        ><v-icon color="brown"> mdi-delete</v-icon></v-btn
-                      >
-                      <v-btn :id="item.id" text @click="editItem($event)"
-                        ><v-icon :color="item.iconColor"
-                          >mdi-table-edit</v-icon
-                        ></v-btn
-                      >
+                  
+                  <div>
+                    <v-btn :id="item.id" text @click="deleteItem($event)"
+                      ><v-icon color="brown"> mdi-delete</v-icon></v-btn
+                    >
+                    <v-btn :id="item.id" text @click="editItem($event)"
+                      ><v-icon :color="item.iconColor"
+                        >mdi-table-edit</v-icon
+                      ></v-btn
+                    >
 
-                      <!-- CRM 2 : button colour change with salesEmailSent change to 'Y'-->
-                      <v-btn :id="item.id" text @click="emailItem($event)"
-                        ><v-icon :color="item.emailIconColor"
-                          >mdi-email-outline</v-icon
-                        ></v-btn
-                      >
+                    <v-btn :id="item.id" text @click="emailItem($event)"
+                      ><v-icon :color="item.emailIconColor"
+                        >mdi-email-outline</v-icon
+                      ></v-btn
+                    >
 
-                      <!-- // button for file uploads dialog -->
-                      <v-btn :id="item.id" text @click="showFiles($event)"
-                        ><v-icon color="black">mdi-eye</v-icon></v-btn
-                      >
-                    </div>
-                  </v-list-item-action>
+                    <v-btn :id="item.id" text @click="showFiles($event)"
+                      ><v-icon color="black">mdi-eye</v-icon></v-btn
+                    >
+                  </div>
+                </v-list-item>
+                <v-list-item :key="item.id">
+                  <v-list-item-content>
+                    <v-list-item-action
+                      ><br />
+                      <v-stepper>
+                        <v-stepper-header>
+                          <!-- <v-divider></v-divider> -->
+
+                          <v-stepper-step
+                            step="1"
+                            complete
+                            :id="item.id"
+                            color="green accent-3"
+                          >
+                            Info Received
+                          </v-stepper-step>
+
+                          <!-- set the 'complete' attribute based off a property which checks and indicates if all documents exist -->
+                          <v-stepper-step 
+                          step="2" 
+                          :id="item.id" 
+                          color="indigo"
+                          :complete="item.allFilesReceived"
+                          >
+                            Docs Uploaded
+                          </v-stepper-step>
+
+                          <!-- set the 'complete' attribute based off a property which checks and indicates if 
+                        Donovan or Debbie have approved the documents / sale -->
+                          <v-stepper-step 
+                          step="3" 
+                          :id="item.id" 
+                          color="green"
+                          >
+                            Awaiting confirmation
+                          </v-stepper-step>
+                        </v-stepper-header>
+                      </v-stepper>
+                    </v-list-item-action>
+                  </v-list-item-content>
                 </v-list-item>
               </template>
             </v-list-item-group>
@@ -104,7 +142,7 @@ export default {
       flatPic: require("../assets/unfurnished-flat.jpg"),
       items: [],
       blocks: [],
-      clientDialog: false,
+      clientDialog: Boolean,
 
       dialog: null,
 
@@ -118,6 +156,7 @@ export default {
       clientFileDialog: false,
       clientFilesData: [],
       dialogFiles: null,
+      allFilesReceived: false,
     };
   },
   computed: {
@@ -184,7 +223,7 @@ export default {
     },
     async initialData() {
       let data = {
-        id: "",
+        id: "",        
       };
       await axios({
         method: "post",
@@ -200,15 +239,17 @@ export default {
               el.fileOTPurl = `${this.url}/uploads/${el.fileOTP}`;
               // console.log("FileId", el.fileId);
               if (
-                el.fileOTP === "" ||
-                el.fileId === "" ||
-                el.fileBank === "" ||
-                el.filePaySlip === "" ||
-                el.fileFica === ""
+                el.fileOTP === "" || el.fileOTP === "undefined" ||              
+                el.fileId === "" || el.fileId  === "undefined" ||
+                el.fileBank === "" || el.fileBank  === "undefined" ||
+                el.filePaySlip === "" || el.filePaySlip  === "undefined" ||
+                el.fileFica === "" || el.fileFica  === "undefined" 
               ) {
                 el.iconColor = "red";
+                el.allFilesReceived = false;
               } else {
                 el.iconColor = "green";
+                el.allFilesReceived = true;
               }
               if (el.salesEmailSent === "Y") {
                 el.emailIconColor = "green";
@@ -250,17 +291,56 @@ export default {
         });
     },
     async showFiles(event) {
+      console.log(event);
       let targetVal = event.currentTarget.id;
-      console.log("Show Files: ", targetVal);
+      console.log(targetVal);
+      // console.log("Show Files: ", targetVal);
       this.clientFilesData = this.sales.filter((el) => {
         return el.id === parseInt(targetVal);
       });
-      console.log("clientFilesData", this.clientFilesData);
+      // console.log("clientFilesData", this.clientFilesData);
       this.clientFileDialog = true;
     },
     async sendEmail(event) {
       let targetVal = event.currentTarget.id;
       console.log("Email Sale Info, targetID: ", targetVal);
+    },
+    checkForAllFiles() {
+      let files = [];
+      let contains = [];
+      if (this.fileOPT !== null) {
+        contains.push("fileOTP");
+        files.push(this.fileOPT); // append mimetype here?
+      }
+      if (this.fileId !== null) {
+        contains.push("fileId");
+        files.push(this.fileId);
+      }
+      if (this.fileBank !== null) {
+        contains.push("fileBank");
+        files.push(this.fileBank);
+      }
+      if (this.filePaySlip) {
+        this.filePaySlip.forEach((el) => {
+          contains.push("filePaySlip");
+          files.push(el);
+        });
+      } else {
+        console.log("No File");
+      }
+
+      if (this.fileFica) {
+        this.fileFica.forEach((el) => {
+          contains.push("fileFica");
+          files.push(el);
+        });
+      } else {
+        console.log("No File");
+      }
+
+      console.log("Check for all files, contains = ", contains);
+      console.log("Check for all files, files = ", files);
+
     },
     closeClientForm(event) {
       this.clientDialog = event;
