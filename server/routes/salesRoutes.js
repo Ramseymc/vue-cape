@@ -225,7 +225,8 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
   } catch {
     contains.push(req.body.contains)
   }
-
+  console.log("contains",contains)
+  contains = Array.from(new Set(contains))
   // duplicates formed here ** fix 
   contains.forEach((el) => {
     // for (let i = 0; i < 2; i++) {
@@ -248,7 +249,11 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
    // }
   })
 
-  uniq = [...new Set(fileDetails)];
+
+console.log("fileDetails", fileDetails)
+//   uniq = [...new Set(fileDetails)];
+//   fileDetails = Array.from(new Set(fileDetails))
+// console.log("fileDetails after set", fileDetails)
  
   // renaming files if required
   fileDetails.forEach((el) => {
@@ -267,7 +272,7 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
   
 
   console.log("FD", fileDetails)
-  console.log("FD | UNIQ ", uniq)
+  //console.log("FD | UNIQ ", uniq)
 
   let mysql = `UPDATE salesinfo 
       SET 
@@ -357,7 +362,24 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
   
   mysql = `${mysql} ${additionalSQL} WHERE id = ${req.body.id}`
   console.log(chalk.red("FINALmySQL UPDATE Satement, in salesRoutes.js = ", mysql));
+  
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      connection.release();
+      resizeBy.send("Error with connection");
+    }
+    connection.query(mysql, function (error, result) {
+      if (error) {
+        console.log(error);
+      } else {
+        res.json(result);
+        console.log("After Update stmnt")
+        console.log(result)
+      }
+    });
+    connection.release();
 
+  })
   // send the sql statement to the db 
 
 })

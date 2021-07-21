@@ -11,16 +11,6 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <!-- change v-text-field to labels or spans (text only) -->
-                  <!-- CRM 1: Why are all links redering even when receiving blank data? (should be hitting the logic) -->
-                  <!-- v-model="fileData[0].fileOPT"                           -->
-                  <!-- <v-col cols="12" sm="8" md="8" 
-                  
-                    v-if="fileData[0].fileOPT !== null || fileData[0].fileOPT !== '' || fileData[0].fileOPT !== 'undefined'"
-                  >
-                 
-                    <span v-if="fileData[0].fileOPT !== null || fileData[0].fileOPT !== '' || fileData[0].fileOPT !== 'undefined'">OTP</span> 
-                  </v-col>                   -->
                   <v-col
                     cols="6"
                     sm="6"
@@ -178,6 +168,7 @@
                     "
                   >
                     <v-spacer></v-spacer>
+
                     <a
                       :href="`http://localhost:3000/uploads/${fileData[0].fileFica}`"
                       download
@@ -283,19 +274,6 @@ export default {
     return {
       snackbar: false,
       snackBarmessage: "Successfully Posted!!",
-
-      //   firstName: "Connor",
-      //   lastName: "McLean",
-      //   iDNumber: "9308175039088",
-      //   email: "test@gmail.com",
-      //   bankName: "CAPITEC",
-      //   accountNumber: "1234567890",
-      //   accountType: "SAVINGS",
-      //   fileOPT: null,
-      //   fileId: null,
-      //   fileBank: null,
-      //   filePaySlip: null,
-      //   fileFica: null,
       url: "",
     };
   },
@@ -306,6 +284,17 @@ export default {
   },
   mounted() {
     this.url = `${this.$store.state.url}/uploads/`;
+
+    // THIS A THOUGHT -  THEN POPULATE NTO A LOOP (YOU MAY NEED A FEW ANCHOR TAGS)
+    // let test = this.fileData[0].fileFica
+    // try {
+    //   test.split(",")
+    // } catch {
+    //   console.log("Cannot split this item")
+    // }
+    // console.log(test.length)
+
+    // el.fileFica = 
 
     setTimeout(() => {
       console.log("ClientFiles: ", this.fileData);

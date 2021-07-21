@@ -22,6 +22,28 @@
               <template v-for="item in salesFiltered">
                 <v-list-item :key="item.id">
                   <v-list-item-content>
+                
+                       <v-list-action v-if="showActions">
+                       
+                      <v-btn :id="item.id" text @click="deleteItem($event)"
+                        ><v-icon color="brown"> mdi-delete</v-icon></v-btn
+                      >
+                      <v-btn :id="item.id" text @click="editItem($event)"
+                        ><v-icon :color="item.iconColor"
+                          >mdi-table-edit</v-icon
+                        ></v-btn
+                      >
+
+                      <v-btn :id="item.id" text @click="emailItem($event)"
+                        ><v-icon :color="item.emailIconColor"
+                          >mdi-email-outline</v-icon
+                        ></v-btn
+                      >
+
+                      <v-btn :id="item.id" text @click="showFiles($event)"
+                        ><v-icon color="black">mdi-eye</v-icon></v-btn
+                      >
+                    </v-list-action>
                     <div style="display: flex; justify-content: flex-start">
                       <v-list-item-subtitle
                         v-text="item.block"
@@ -37,70 +59,63 @@
                         v-text="item.firstname"
                       ></v-list-item-subtitle>
                     </div>
-                  </v-list-item-content>
-                  
-                  <div>
-                    <v-btn :id="item.id" text @click="deleteItem($event)"
-                      ><v-icon color="brown"> mdi-delete</v-icon></v-btn
-                    >
-                    <v-btn :id="item.id" text @click="editItem($event)"
-                      ><v-icon :color="item.iconColor"
-                        >mdi-table-edit</v-icon
-                      ></v-btn
-                    >
+                    
 
-                    <v-btn :id="item.id" text @click="emailItem($event)"
-                      ><v-icon :color="item.emailIconColor"
-                        >mdi-email-outline</v-icon
-                      ></v-btn
-                    >
+                    <v-stepper elevation="0">
+                      <v-stepper-header>
+                        <v-stepper-step
+                          step="1"
+                          complete
+                          :id="item.id"
+                          color="green accent-3"
+                        >
+                          Info Received
+                        </v-stepper-step>
 
-                    <v-btn :id="item.id" text @click="showFiles($event)"
-                      ><v-icon color="black">mdi-eye</v-icon></v-btn
-                    >
-                  </div>
-                </v-list-item>
-                <v-list-item :key="item.id">
-                  <v-list-item-content>
-                    <v-list-item-action
-                      ><br />
-                      <v-stepper>
-                        <v-stepper-header>
-                          <!-- <v-divider></v-divider> -->
+                        <v-divider></v-divider>
 
-                          <v-stepper-step
-                            step="1"
-                            complete
-                            :id="item.id"
-                            color="green accent-3"
-                          >
-                            Info Received
-                          </v-stepper-step>
-
-                          <!-- set the 'complete' attribute based off a property which checks and indicates if all documents exist -->
-                          <v-stepper-step 
-                          step="2" 
-                          :id="item.id" 
+                        <v-stepper-step
+                          step="2"
+                          :id="item.id"
                           color="indigo"
                           :complete="item.allFilesReceived"
-                          >
-                            Docs Uploaded
-                          </v-stepper-step>
+                          @click="showActions = !showActions"
+                        >
+                          Docs Uploaded
+                        </v-stepper-step>
+                        <v-divider></v-divider>
 
-                          <!-- set the 'complete' attribute based off a property which checks and indicates if 
-                        Donovan or Debbie have approved the documents / sale -->
-                          <v-stepper-step 
-                          step="3" 
-                          :id="item.id" 
-                          color="green"
-                          >
-                            Awaiting confirmation
-                          </v-stepper-step>
-                        </v-stepper-header>
-                      </v-stepper>
-                    </v-list-item-action>
+                        <v-stepper-step step="3" :id="item.id" color="green">
+                          Awaiting confirmation
+                        </v-stepper-step>
+                        <v-divider></v-divider>
+
+                        <v-stepper-step step="4" :id="item.id" color="green">
+                          Awaiting confirmation
+                        </v-stepper-step>
+                        <v-divider></v-divider>
+
+                        <v-stepper-step step="5" :id="item.id" color="green">
+                          Awaiting confirmation
+                        </v-stepper-step>
+                        <v-divider></v-divider>
+
+                        <v-stepper-step step="6" :id="item.id" color="green">
+                          Awaiting confirmation
+                        </v-stepper-step>
+                      </v-stepper-header>
+                    </v-stepper>
                   </v-list-item-content>
+
+                  <!-- <v-list-item-content> -->
+                 <!-- PPPPPPPP -->
+                  <!-- </v-list-item-content> -->
+
+                  <!-- </v-list-item>
+                <v-list-item> -->
                 </v-list-item>
+                <!-- </v-list-item> -->
+                <!-- </v-list-item> -->
               </template>
             </v-list-item-group>
           </v-list>
@@ -137,6 +152,7 @@ export default {
   },
   data() {
     return {
+      showActions: false,
       blockValue: null, //From Dropdown
       unitValue: null,
       flatPic: require("../assets/unfurnished-flat.jpg"),
@@ -223,7 +239,7 @@ export default {
     },
     async initialData() {
       let data = {
-        id: "",        
+        id: "",
       };
       await axios({
         method: "post",
@@ -239,11 +255,16 @@ export default {
               el.fileOTPurl = `${this.url}/uploads/${el.fileOTP}`;
               // console.log("FileId", el.fileId);
               if (
-                el.fileOTP === "" || el.fileOTP === "undefined" ||              
-                el.fileId === "" || el.fileId  === "undefined" ||
-                el.fileBank === "" || el.fileBank  === "undefined" ||
-                el.filePaySlip === "" || el.filePaySlip  === "undefined" ||
-                el.fileFica === "" || el.fileFica  === "undefined" 
+                el.fileOTP === "" ||
+                el.fileOTP === "undefined" ||
+                el.fileId === "" ||
+                el.fileId === "undefined" ||
+                el.fileBank === "" ||
+                el.fileBank === "undefined" ||
+                el.filePaySlip === "" ||
+                el.filePaySlip === "undefined" ||
+                el.fileFica === "" ||
+                el.fileFica === "undefined"
               ) {
                 el.iconColor = "red";
                 el.allFilesReceived = false;
@@ -340,7 +361,6 @@ export default {
 
       console.log("Check for all files, contains = ", contains);
       console.log("Check for all files, files = ", files);
-
     },
     closeClientForm(event) {
       this.clientDialog = event;
@@ -358,3 +378,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+/* .formatThis {
+  display: flex;
+  width: 50px;
+} */
+  
+</style>
