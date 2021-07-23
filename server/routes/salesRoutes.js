@@ -284,13 +284,13 @@ console.log("fileDetails", fileDetails)
        accountNumber='${req.body.accountNumber}',
        accountType='${req.body.accountType}',
        block='${req.body.block}',
-       unit='${req.body.unit}' `
-
-  console.log("FileDetails to get the file values from dynamically:", fileDetails)
+       unit='${req.body.unit}',
+       mood='${req.body.mood}',
+       flooring='${req.body.flooring}', ` 
 
   // dynamicSQL file uploads 
   let otpSQL = fileDetails.filter((el) => {
-    console.log("Element in the filter file details array:", el);
+    
     return el.fileType === 'fileOTP'
   })  // does this below need to be inside the loop?
   console.log(chalk.green("otpSQL = ", otpSQL))
@@ -488,8 +488,8 @@ router.post("/createClient", upload.array("documents"), (req, res) => {
   var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
   var dateTime = date + ' ' + time;
 
-  let mysql = `INSERT INTO salesinfo (firstname, lastname, iDNumber, email, bankName, accountNumber, accountType, block, unit, fileOTP, fileId, fileBank, filePaySlip, fileFica, dateCreated) VALUES (
-                '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${fileOTP}','${fileId}',
+  let mysql = `INSERT INTO salesinfo (firstname, lastname, iDNumber, email, bankName, accountNumber, accountType, block, unit, mood, flooring, fileOTP, fileId, fileBank, filePaySlip, fileFica, dateCreated) VALUES (
+                '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${req.body.mood}','${req.body.flooring}','${fileOTP}','${fileId}',
                 '${fileBank}','${filePaySlip}','${fileFica}','${dateTime}'
       );`
 

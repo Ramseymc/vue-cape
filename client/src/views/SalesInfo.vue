@@ -22,9 +22,7 @@
               <template v-for="item in salesFiltered">
                 <v-list-item :key="item.id">
                   <v-list-item-content>
-                
-                       <v-list-action v-if="showActions">
-                       
+                    <v-list-action v-if="showActions">
                       <v-btn :id="item.id" text @click="deleteItem($event)"
                         ><v-icon color="brown"> mdi-delete</v-icon></v-btn
                       >
@@ -59,32 +57,39 @@
                         v-text="item.firstname"
                       ></v-list-item-subtitle>
                     </div>
-                    
 
                     <v-stepper elevation="0">
                       <v-stepper-header>
                         <v-stepper-step
-                          step="1"
+                          step="0"
                           complete
                           :id="item.id"
-                          color="green accent-3"
+                          color="red"
+                          editable
+                           @click="showActions = !showActions"
+                        >
+
+                        </v-stepper-step>
+                        <v-stepper-step
+                          step="1"
+                          :complete="item.allFilesReceived"
+                          :id="item.id"
+                          :color="item.allFilesReceived ? 'green accent-3':'grey darken-2' "
                         >
                           Info Received
                         </v-stepper-step>
 
                         <v-divider></v-divider>
-
+                        
                         <v-stepper-step
                           step="2"
                           :id="item.id"
-                          color="indigo"
-                          :complete="item.allFilesReceived"
-                          @click="showActions = !showActions"
+                          color="indigo"                                                   
                         >
-                          Docs Uploaded
+                          Signed
                         </v-stepper-step>
                         <v-divider></v-divider>
-
+                        
                         <v-stepper-step step="3" :id="item.id" color="green">
                           Awaiting confirmation
                         </v-stepper-step>
@@ -94,7 +99,7 @@
                           Awaiting confirmation
                         </v-stepper-step>
                         <v-divider></v-divider>
-
+                        
                         <v-stepper-step step="5" :id="item.id" color="green">
                           Awaiting confirmation
                         </v-stepper-step>
@@ -108,7 +113,7 @@
                   </v-list-item-content>
 
                   <!-- <v-list-item-content> -->
-                 <!-- PPPPPPPP -->
+                  <!-- PPPPPPPP -->
                   <!-- </v-list-item-content> -->
 
                   <!-- </v-list-item>
@@ -384,5 +389,4 @@ export default {
   display: flex;
   width: 50px;
 } */
-  
 </style>
