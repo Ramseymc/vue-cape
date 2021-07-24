@@ -212,6 +212,33 @@ async function sendMail(subject, recipient, output) {
   });
 }
 
+router.post("/updateClientOTP", (req,res) => {
+  console.log("SVR SIDE REQ:", req.body);
+  if (req.body.fileOTP !== null || req.body.fileOTP !== 'undefined' || req.body.fileOTP !== '' )
+  {
+    let mysql = `UPDATE salesinfo 
+      SET fileOTP = '${req.body.fileOTP}' WHERE id = ${req.body.id}`
+    // execute the sql and return the res.json
+    //upload(req.body.fileOTP);
+    pool.getConnection(function (err, connection) {
+      if (err) {
+        connection.release();
+        resizeBy.send("Error with connection");
+      }
+      connection.query(mysql, function (error, result) {
+        if (error) {
+          console.log(error);
+        } else {
+          res.json(result);
+          console.log("After UpdateOTP stmnt")
+          console.log(result)
+        }
+      });
+      connection.release();  
+    })
+  }
+})
+
 // update the salesinfo record matching 'id'
 router.post("/updateClient", upload.array("documents"), (req, res) => {
   console.log("Files: ", req.files);

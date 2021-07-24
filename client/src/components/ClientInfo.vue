@@ -116,6 +116,7 @@
                       :value="n"
                     ></v-radio> -->
                   </v-radio-group>
+                   <small>*indicates required field</small>
                   </v-col>
 
                   <!-- Flooring -->
@@ -133,16 +134,18 @@
                       value="Laminate"
                     ></v-radio>
                   </v-radio-group>
+                   
                   </v-col>
+                 
 
                   <label> File Uploads </label>
                   <v-col cols="12" sm="12">
                     <v-file-input
-                      v-model="fileOPT"
+                      v-model="fileOTP"
                       label="OPT"
                       accept="image/png, image/jpeg, image/bmp, image/jpg, application/pdf"
                       filled
-                      hint="OPT"
+                      hint="OTP"
                       persistent-hint
                     ></v-file-input>
                   </v-col>
@@ -252,7 +255,7 @@ export default {
       accountType: "",
       mood: "",
       flooring: "",
-      fileOPT: null,
+      fileOTP: null,
       fileId: null,
       fileBank: null,
       filePaySlip: null,
@@ -272,9 +275,9 @@ export default {
       console.log(this.firstName);
       let files = [];
       let contains = [];
-      if (this.fileOPT !== null) {
+      if (this.fileOTP !== null) {
         contains.push("fileOTP");
-        files.push(this.fileOPT); // append mimetype here?
+        files.push(this.fileOTP); // append mimetype here?
       }
       if (this.fileId !== null) {
         contains.push("fileId");

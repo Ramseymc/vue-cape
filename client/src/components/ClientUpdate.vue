@@ -72,8 +72,7 @@
                       required
                     ></v-text-field>
                   </v-col>
-                  <small>*indicates required field</small>
-
+                  
                   <!-- Mood -->
                   <v-col cols="4" sm="4">
                     <medium><b>Mood</b></medium>
@@ -95,6 +94,7 @@
                       :value="n"
                     ></v-radio> -->
                     </v-radio-group>
+                     <small>*indicates required field</small>
                   </v-col>
 
                   <!-- Flooring -->
@@ -112,8 +112,10 @@
                         value="Laminate"
                       ></v-radio>
                     </v-radio-group>
+                 
                   </v-col>
 
+                
                   <!-- File Uploads  -->
 
                   <!-- All files received -->

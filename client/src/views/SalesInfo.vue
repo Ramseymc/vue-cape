@@ -64,7 +64,7 @@
                           step="0"
                           complete
                           :id="item.id"
-                          color="red"
+                          color="blue darken-2"
                           editable
                            @click="showActions = !showActions"
                         >
@@ -75,12 +75,13 @@
                           :complete="item.allFilesReceived"
                           :id="item.id"
                           :color="item.allFilesReceived ? 'green accent-3':'grey darken-2' "
+                          @click="openSignOff($event)"
                         >
                           Info Received
                         </v-stepper-step>
 
                         <v-divider></v-divider>
-                        
+
                         <v-stepper-step
                           step="2"
                           :id="item.id"
@@ -139,6 +140,13 @@
       :fileData="clientFilesData"
       @closeForm="closeClientFiles"
     />
+    <SignOff
+      v-if="signOffData.length > 0"
+      :dialogFiles="signOffDialog"
+      :fileData="signOffData"
+      @closeForm="closeSignOffForm"
+    /> 
+    
     <!-- :dialog="clientFileDialog" -->
   </v-container>
 </template>
@@ -147,6 +155,7 @@
 import axios from "axios";
 import ClientUpdate from "../components/ClientUpdate.vue";
 import ClientFiles from "../components/ClientFiles.vue";
+import SignOff from "../components/signOffOTP.vue";
 // let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
 export default {
   name: "salesinfo",
@@ -154,6 +163,7 @@ export default {
   components: {
     ClientUpdate,
     ClientFiles,
+    SignOff,
   },
   data() {
     return {
@@ -178,6 +188,10 @@ export default {
       clientFilesData: [],
       dialogFiles: null,
       allFilesReceived: false,
+
+      //
+      signOffDialog: false,
+      signOffData: [],
     };
   },
   computed: {
@@ -327,6 +341,18 @@ export default {
       // console.log("clientFilesData", this.clientFilesData);
       this.clientFileDialog = true;
     },
+    async openSignOff(event) {
+      console.log(event);
+      let targetVal = event.currentTarget.id;
+      console.log(targetVal);
+      // console.log("Show Files: ", targetVal);
+      this.signOffData = this.sales.filter((el) => {
+        return el.id === parseInt(targetVal);
+      });
+      // console.log("signOffData", this.signOffData);
+      this.signOffDialog = true;
+    },
+
     async sendEmail(event) {
       let targetVal = event.currentTarget.id;
       console.log("Email Sale Info, targetID: ", targetVal);
@@ -376,6 +402,12 @@ export default {
     getClientFiles() {
       this.clientFileDialog = !this.clientFileDialog;
     },
+    getSignOff() {
+      this.signOffDialog = !this.signOffDialog;
+    },
+    closeSignOffForm(event) {
+      this.signOffDialog = event;
+    },
     closeClientFiles(event) {
       console.log("THE EVENT", event);
       this.clientFileDialog = event;
@@ -390,3 +422,4 @@ export default {
   width: 50px;
 } */
 </style>
+
