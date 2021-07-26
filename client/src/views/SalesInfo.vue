@@ -337,11 +337,6 @@ export default {
       // console.log("signOffData", this.signOffData);
       this.signOffDialog = true;
     },
-
-    async sendEmail(event) {
-      let targetVal = event.currentTarget.id;
-      //console.log("Email Sale Info, targetID: ", targetVal);
-    },
     checkForAllFiles() {
       let files = [];
       let contains = [];
