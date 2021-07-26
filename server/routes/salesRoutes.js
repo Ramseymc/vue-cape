@@ -212,14 +212,25 @@ async function sendMail(subject, recipient, output) {
   });
 }
 
-router.post("/updateClientOTP", (req,res) => {
-  console.log("SVR SIDE REQ:", req.body);
-  if (req.body.fileOTP !== null || req.body.fileOTP !== 'undefined' || req.body.fileOTP !== '' )
-  {
+// upload via multer.single()
+router.post("/updateClientOTP", upload.single("fileOTP"), (req, res) => {
+  console.log("ID:", req.body.id);
+
+  // rename with file on server the extension appended
+  fs.rename(`public/uploads/${req.file.filename}`, `public/uploads/${req.file.filename}.${req.file.mimetype.split("/")[1]}`, (err) => {
+    if (err) {
+      console.log("Error renaming");
+    } //throw err
+  })
+
+  // insert the filename with extension into the fileOTP db field
+  let fileOTP = `${req.file.filename}.${req.file.mimetype.split("/")[1]}`
+  if (req.body.fileOTP !== null || req.body.fileOTP !== 'undefined' || req.body.fileOTP !== '') {
     let mysql = `UPDATE salesinfo 
-      SET fileOTP = '${req.body.fileOTP}' WHERE id = ${req.body.id}`
+      SET fileOTP = '${fileOTP}', signedOff = true WHERE id = ${req.body.id}`
+
+    //console.log("OVERRIDE OTP SQL = ", mysql);
     // execute the sql and return the res.json
-    //upload(req.body.fileOTP);
     pool.getConnection(function (err, connection) {
       if (err) {
         connection.release();
@@ -234,7 +245,7 @@ router.post("/updateClientOTP", (req,res) => {
           console.log(result)
         }
       });
-      connection.release();  
+      connection.release();
     })
   }
 })
@@ -245,43 +256,26 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
   console.log("Info: ", req.body);
 
   let fileDetails = []
-  console.log(req.body.contains)
+  //console.log(req.body.contains)
   let contains = []
   try {
     contains = req.body.contains.split(",")
   } catch {
     contains.push(req.body.contains)
   }
-  console.log("contains",contains)
   contains = Array.from(new Set(contains))
-  // duplicates formed here ** fix 
   contains.forEach((el) => {
-    // for (let i = 0; i < 2; i++) {
-    //   if (i === 1) { continue; }
-      req.files.forEach((el2) => {
-        
-          
-          // if (el === el2.filename) {
-          el2.filenameA = `${el2.filename}.${el2.mimetype.split("/")[1]}`
-          let insert = {
-            fileType: el,
-            fileName: el2.filenameA,
-            originalName: el2.filename
-          }
-          fileDetails.push(insert)
-          // }
-      
-        
-      })
-   // }
+
+    req.files.forEach((el2) => {
+      el2.filenameA = `${el2.filename}.${el2.mimetype.split("/")[1]}`
+      let insert = {
+        fileType: el,
+        fileName: el2.filenameA,
+        originalName: el2.filename
+      }
+    })
   })
 
-
-console.log("fileDetails", fileDetails)
-//   uniq = [...new Set(fileDetails)];
-//   fileDetails = Array.from(new Set(fileDetails))
-// console.log("fileDetails after set", fileDetails)
- 
   // renaming files if required
   fileDetails.forEach((el) => {
     let filtered = req.files.filter((el2) => {
@@ -292,14 +286,9 @@ console.log("fileDetails", fileDetails)
     fs.rename(`public/uploads/${el.originalName}`, `public/uploads/${el.fileNameUpdated}`, (err) => {
       if (err)
         console.log("Error renaiming");
-        //throw err
+      //throw err
     })
   })
-  
-  
-
-  console.log("FD", fileDetails)
-  //console.log("FD | UNIQ ", uniq)
 
   let mysql = `UPDATE salesinfo 
       SET 
@@ -313,11 +302,11 @@ console.log("fileDetails", fileDetails)
        block='${req.body.block}',
        unit='${req.body.unit}',
        mood='${req.body.mood}',
-       flooring='${req.body.flooring}', ` 
+       flooring='${req.body.flooring}', `
 
   // dynamicSQL file uploads 
   let otpSQL = fileDetails.filter((el) => {
-    
+
     return el.fileType === 'fileOTP'
   })  // does this below need to be inside the loop?
   console.log(chalk.green("otpSQL = ", otpSQL))
@@ -334,7 +323,7 @@ console.log("fileDetails", fileDetails)
     return el.fileType === 'fileId'
   })  // does this below need to be inside the loop?
   console.log(chalk.green("bankSQL = ", idSQL))
-  //let additionalSQL = ""
+
   if (idSQL.length > 0) {
     // 
     bankSQL.forEach((el) => {
@@ -346,9 +335,8 @@ console.log("fileDetails", fileDetails)
   let bankSQL = fileDetails.filter((el) => {
     console.log("Element in the filter file details array:", el);
     return el.fileType === 'fileBank'
-  })  // does this below need to be inside the loop?
+  })  
   console.log(chalk.green("bankSQL = ", bankSQL))
-  //let additionalSQL = ""
   if (bankSQL.length > 0) {
     // 
     bankSQL.forEach((el) => {
@@ -358,38 +346,36 @@ console.log("fileDetails", fileDetails)
 
   let ficaSQL = fileDetails.filter((el) => {
     console.log("Element in the filter file details array:", el);
-    return el.fileType ===  'fileFica'
+    return el.fileType === 'fileFica'
   })  // does this below need to be inside the loop?
   console.log(chalk.green("ficaSQL = ", ficaSQL))
-  //let additionalSQL = ""
   let insertArrayFica = []
 
-  if (ficaSQL.length > 0) { 
+  if (ficaSQL.length > 0) {
     ficaSQL.forEach((el) => {
       insertArrayFica.push(el.fileName)
     })
-   additionalSQL = `${additionalSQL}, fileFica = '${insertArrayFica.join(",")}'`
+    additionalSQL = `${additionalSQL}, fileFica = '${insertArrayFica.join(",")}'`
   }
 
   let paySlipSQL = fileDetails.filter((el) => {
     console.log("Element in the filter file details array:", el);
-    return el.fileType ===  'filePaySlip'
+    return el.fileType === 'filePaySlip'
   })  // does this below need to be inside the loop?
   console.log(chalk.green("paySlipSQL = ", paySlipSQL))
-  //let additionalSQL = ""
   let insertArrayPaySlip = []
 
-  if (paySlipSQL.length > 0) { 
+  if (paySlipSQL.length > 0) {
     paySlipSQL.forEach((el) => {
       insertArrayPaySlip.push(el.fileName)
     })
-   additionalSQL = `${additionalSQL}, filePaySlip = '${insertArrayPaySlip.join(",")}'`
+    additionalSQL = `${additionalSQL}, filePaySlip = '${insertArrayPaySlip.join(",")}'`
   }
   // dynamic inserts for files, done  ( does input two of each for multiple )
-  
+
   mysql = `${mysql} ${additionalSQL} WHERE id = ${req.body.id}`
   console.log(chalk.red("FINALmySQL UPDATE Satement, in salesRoutes.js = ", mysql));
-  
+
   pool.getConnection(function (err, connection) {
     if (err) {
       connection.release();
@@ -407,8 +393,6 @@ console.log("fileDetails", fileDetails)
     connection.release();
 
   })
-  // send the sql statement to the db 
-
 })
 
 router.post("/createClient", upload.array("documents"), (req, res) => {
@@ -419,7 +403,6 @@ router.post("/createClient", upload.array("documents"), (req, res) => {
 
   contains.forEach((el) => {
     req.files.forEach((el2) => {
-      // if (el === el2.filename) {
       el2.filenameA = `${el2.filename}.${el2.mimetype.split("/")[1]}`
       let insert = {
         fileType: el,
@@ -427,18 +410,13 @@ router.post("/createClient", upload.array("documents"), (req, res) => {
         originalName: el2.filename
       }
       fileDetails.push(insert)
-      // }
-
     })
   })
-  // rs
-  // rename the uploaded file with the correct extension
-  // ** NOTE: I can remove the fileExt / fileN substr check
+
   fileDetails.forEach((el) => {
     let filtered = req.files.filter((el2) => {
       return el2.filename === el.originalName
     })
-    // el.fileNameUpdated = `${el.fileName}.${filtered[0].mimetype.split("/")[1]}`
     el.fileNameUpdated = `${el.fileName}`
     fs.rename(`public/uploads/${el.originalName}`, `public/uploads/${el.fileNameUpdated}`, (err) => {
       if (err)
@@ -488,7 +466,6 @@ router.post("/createClient", upload.array("documents"), (req, res) => {
       fileFica.forEach((el) => {
         ficaData.push(el.fileName)
       })
-      // console.log(ficaData)
       fileFica = ficaData.join(",")
     } else {
       fileFica = ""
@@ -504,7 +481,6 @@ router.post("/createClient", upload.array("documents"), (req, res) => {
       filePaySlip.forEach((el) => {
         fileData.push(el.fileName)
       })
-      // console.log(fileData)
       filePaySlip = fileData.join(",")
     } else {
       filePaySlip = ""
@@ -537,12 +513,8 @@ router.post("/createClient", upload.array("documents"), (req, res) => {
       }
     });
     connection.release();
-
   })
 })
-
-
-
 
 // CRM 1 : Transporter / formatting here 
 let transporter = nodemailer.createTransport({

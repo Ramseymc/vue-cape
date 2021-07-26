@@ -1,34 +1,13 @@
 <template>
-  <!-- CRM 3: Fix centering on this page -->
-  <!-- <v-container> -->
-  <!-- <div class="wrapper"> -->
-  <!-- <v-row justify="center" persistent max-width="900px"> -->
-
-  <!-- <div class="center">
-      <pre> -->
   <div>
-    <!-- </div> -->
     <ClientInfo
       :blockValue="blockValue"
       :unitValue="unitValue"
       :dialog="clientDialog"
       @closeForm="closeClientForm"
     />
-    <!-- </v-row> -->
-    <!-- </div> -->
 
-    <!-- </v-container> -->
-    <!-- </div> -->
-
-    <!-- <div> -->
     <v-card class="mx-auto" max-width="100vw">
-      <!-- <template slot="progress">
-        <v-progress-linear
-          color="#bc9654"
-          height="10"
-          indeterminate
-        ></v-progress-linear>
-      </template> -->
       <v-img height="350" :src="flatPic"></v-img>
 
       <v-card-title>Choose your options</v-card-title>
@@ -55,42 +34,10 @@
             label="Choose Unit"
           ></v-autocomplete>
         </div>
-
-        <!--     
-        <v-stepper alt-labels non-linear>
-          <v-stepper-header>
-            <v-stepper-step step="1" complete color="red"> OTP </v-stepper-step>
-
-            <v-divider></v-divider>
-            
-            <v-stepper-step
-              step="2"
-              color="amber"
-              editable
-              :complete="bondApproved"
-              @click="bondApproval"
-            >
-              Bond Approved
-            </v-stepper-step>
-
-            <v-divider></v-divider>
-
-            <v-stepper-step
-              step="3"
-              color="green"
-              editable
-              :complete="documentsSigned"
-              @click="docsSigned"
-            >
-              Final Docs Signed
-            </v-stepper-step>
-          </v-stepper-header>
-        </v-stepper> -->
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <!-- <div> -->
-        <!-- <v-spacer></v-spacer> -->
+
         <v-btn
           v-if="blockValue && unitValue"
           text
@@ -102,10 +49,9 @@
           rounded
           >Create Sale</v-btn
         >
-        <!-- </div> -->
+
         <v-spacer></v-spacer>
       </v-card-actions>
-
       <v-divider class="mx-4"></v-divider>
     </v-card>
   </div>
@@ -114,10 +60,9 @@
 <script>
 import axios from "axios";
 import ClientInfo from "../components/ClientInfo.vue";
-// let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
+
 export default {
   name: "salesstart",
-  //name: "apartment",
   components: {
     ClientInfo,
   },
@@ -132,10 +77,6 @@ export default {
     };
   },
   async mounted() {
-    // console.log("Checking ID");
-    // console.log("Checking ID2");
-    // console.log("Connor", this.$store.state.development.id);
-
     let data = {
       id: this.$store.state.development.id,
     };

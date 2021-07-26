@@ -76,16 +76,17 @@
                   <!-- Mood -->
                   <v-col cols="4" sm="4">
                     <medium><b>Mood</b></medium>
-                    <v-radio-group v-model="editData[0].mood">
+                    <v-radio-group 
+                      v-model="editData[0].mood">
                       <v-radio
                         label="Mood 1"
                         color="black"
-                        value="Mood1"
+                        value="Mood 1"
                       ></v-radio>
                       <v-radio
                         label="Mood 2"
                         color="red darken-3"
-                        value="Mood2"
+                      value="Mood 2"
                       ></v-radio>
                       <!-- <v-radio
                       v-for="n in 3"
@@ -254,25 +255,29 @@ export default {
       fileBank: null,
       filePaySlip: null,
       fileFica: null,
+      // tiles: "Tiles",
+      // mood: "Mood 1"
       // finalEditData: {}
     };
   },
   beforeMount() {
-    console.log("BEFORE MOUNTED");
+    //console.log("BEFORE MOUNTED");
     //  this.finalEditData = this.editData[0]
     this.editData.forEach((el) => {
       el.id = el.id.toString();
+      if (el.flooring === "") {
+      el.flooring = "Tiles"
+      }
+      if (el.mood === "") {
+      el.mood = "Mood 1"
+      }
     });
+    //console.log(this.editData)
   },
 
   mounted() {
-    this.url = this.$store.state.url;
-    // this.finalEditData = this.editData
-    // setTimeout(
-    //   () => {
-    console.log("ClientUpdate Mounted EditData= ", this.editData);
-    //   },
-    // 1000);
+    this.url = this.$store.state.url;   
+    //console.log("ClientUpdate Mounted EditData= ", this.editData);   
   },
 
   methods: {
@@ -282,7 +287,6 @@ export default {
 
     async updateClientData() {
       // get the form fields data to pass to salesRoutes /updateClient
-
       let files = [];
       let contains = [];
       if (this.fileOPT !== null) {
@@ -315,20 +319,13 @@ export default {
         console.log("No File");
       }
 
-      console.log("contains", contains);
+      // console.log("contains", contains);
+      // console.log("files", files);
+      let formData = new FormData();    
 
-      let formData = new FormData();
-
-      console.log("files", files);
-
-      //   let data = {
-      //   thisData: this.editData,
-      // };
       for (var x = 0; x < files.length; x++) {
-        formData.append("documents", files[x]);
-        // + '.' + files[x].type);  // append mimetype here?
-        // the type var holds 'application/pdf' so I need only the pdf part
-        console.log("FileInfo::: ", files[x]);
+        formData.append("documents", files[x]);       
+        //console.log("FileInfo::: ", files[x]);
       }
       formData.append("firstName", this.editData[0].firstname);
       formData.append("lastName", this.editData[0].lastname);
@@ -345,10 +342,6 @@ export default {
       formData.append("id", this.editData[0].id);
       formData.append("contains", contains);
 
-      // formData.append("contains", contains);
-
-      console.log("OKAY2", this.editData);
-      // Vue warn]: Invalid prop: custom validator check failed for prop "value"
       await axios({
         method: "post",
         url: `${this.url}/updateClient`,
@@ -358,7 +351,7 @@ export default {
           console.log(response.data);
 
           this.snackbar = true;
-          console.log("ClientUpdate.vue - closing form");
+          //console.log("ClientUpdate.vue - closing form");
           // close the form after completing
           this.closeClientInfo();
         },

@@ -46,15 +46,7 @@
                       hint="OTP"
                       persistent-hint
                     ></v-file-input>
-
-                    <!-- <a
-                      :href="`http://localhost:3000/uploads/${fileData[0].fileOTP}`"
-                      download
-                      target
-                      style="text-decoration: none"
-                    >
-                      <v-icon color="green">mdi-file-pdf-box</v-icon>
-                    </a> -->
+                                        
                   </v-col>
                 </v-row>
               </v-container>
@@ -98,23 +90,22 @@ export default {
       url: "",
       arrFicaFiles: [],
       arrPaySlipFiles: [],
+      fileOTP: null
     };
   },
 
   methods: {
     async updateClientOTP() {
       let formData = new FormData();
-        console.log("filedata=", this.fileData[0]);
-        console.log("fileOTP=", this.fileOTP);
-        // i am missing the file uploading, and i should use this.fileData[0].id as the id and the new filename as the name 
-
-      if (this.fileData[0].fileOTP !== null) {
-        formData.append("fileOTP", this.fileData[0].fileOTP);
+       
+      if (this.fileOTP !== null) {
+        formData.append("fileOTP", this.fileOTP);
+        formData.append("id", this.fileData[0].id);
       }
       await axios({
         method: "post",
         url: `${this.url}/updateClientOTP`,
-        data: this.fileData[0],
+        data: formData
       }).then(
         (response) => {
           console.log(response.data);
@@ -136,39 +127,8 @@ export default {
   },
   mounted() {
     this.url = `${this.$store.state.url}`;
-    console.log("ClientUpdate Mounted EditData= ", this.fileData[0]);
-    // //THIS A THOUGHT -  THEN POPULATE NTO A LOOP (YOU MAY NEED A FEW ANCHOR TAGS)
-    // let ficaSplit = this.fileData[0].fileFica;
-    // try {
-    //   //ficaSplit.split(",");
-    //   this.arrFicaFiles = ficaSplit.split(","); // set local array
-    //   this.arrFicaFiles = Array.from(new Set(this.arrFicaFiles))  // removes duplicates
-    // } catch {
-    //   this.arrFicaFiles.push(this.fileData[0].fileFica)
-    //   console.log("Cannot split this item, pushing single file");
-    // }
-    // // RamseyMc now to use the array in a v-for ?
-    // console.log("ficaSplit = ", ficaSplit);
-    // console.log("fileData = ", this.fileData[0]);
-    // console.log("Testing: fileFica split to show multiple docs", ficaSplit);
-    // console.log("this.arrFicaFiles = ", this.arrFicaFiles);
-
-    // let paySlipSplit = this.fileData[0].filePaySlip;
-    // try {
-    //   //paySlipSplit.split(",");
-    //   this.arrPaySlipFiles = paySlipSplit.split(","); // set local array
-    //   this.arrPaySlipFiles = Array.from(new Set(this.arrPaySlipFiles))  // removes duplicates
-    // } catch {
-    //   this.arrPaySlipFiles.push(this.fileData[0].filePaySlip)
-    //   console.log("Cannot split this item, pushing single file");
-    // }
-    // // RamseyMc now to use the array in a v-for ?
-    // console.log("Testing: filePaySlip split to show multiple docs",paySlipSplit);
-    // console.log("this.arrPaySlipFiles = ", this.arrPaySlipFiles);
-
-    // // RamseyMc - the array is correct, how would you use it's size to dynamically build a <ul><li> with anchor tags here </li></ul> using a v-for loop?
-    // // I am currently busy doing that
-
+    console.log("signOffOTP Mounted EditData= ", this.fileData[0]);
+  
     setTimeout(() => {
       console.log("ClientFiles: ", this.fileData);
     }, 4000);

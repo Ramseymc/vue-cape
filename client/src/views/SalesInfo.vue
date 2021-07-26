@@ -49,7 +49,7 @@
                       <v-list-item-subtitle
                         v-text="item.unit"
                       ></v-list-item-subtitle>
-
+                      
                       <v-list-item-subtitle
                         v-text="item.lastname"
                       ></v-list-item-subtitle>
@@ -74,7 +74,7 @@
                           step="1"
                           :complete="item.allFilesReceived"
                           :id="item.id"
-                          :color="item.allFilesReceived ? 'green accent-3':'grey darken-2' "
+                          :color="item.allFilesReceived ? 'green accent-3':'lime lighten-2' "
                           @click="openSignOff($event)"
                         >
                           Info Received
@@ -84,8 +84,8 @@
 
                         <v-stepper-step
                           step="2"
-                          :id="item.id"
-                          color="indigo"                                                   
+                          color="indigo" 
+                          :complete="item.signedOff > 0"                                
                         >
                           Signed
                         </v-stepper-step>
@@ -97,31 +97,22 @@
                         <v-divider></v-divider>
 
                         <v-stepper-step step="4" :id="item.id" color="green">
-                          Awaiting confirmation
+                          Next
                         </v-stepper-step>
                         <v-divider></v-divider>
                         
                         <v-stepper-step step="5" :id="item.id" color="green">
-                          Awaiting confirmation
+                          Next
                         </v-stepper-step>
                         <v-divider></v-divider>
 
                         <v-stepper-step step="6" :id="item.id" color="green">
-                          Awaiting confirmation
+                          Next
                         </v-stepper-step>
                       </v-stepper-header>
                     </v-stepper>
-                  </v-list-item-content>
-
-                  <!-- <v-list-item-content> -->
-                  <!-- PPPPPPPP -->
-                  <!-- </v-list-item-content> -->
-
-                  <!-- </v-list-item>
-                <v-list-item> -->
-                </v-list-item>
-                <!-- </v-list-item> -->
-                <!-- </v-list-item> -->
+                  </v-list-item-content>             
+                </v-list-item>          
               </template>
             </v-list-item-group>
           </v-list>
@@ -147,7 +138,6 @@
       @closeForm="closeSignOffForm"
     /> 
     
-    <!-- :dialog="clientFileDialog" -->
   </v-container>
 </template>
 
@@ -156,7 +146,7 @@ import axios from "axios";
 import ClientUpdate from "../components/ClientUpdate.vue";
 import ClientFiles from "../components/ClientFiles.vue";
 import SignOff from "../components/signOffOTP.vue";
-// let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
+
 export default {
   name: "salesinfo",
   //name: "apartment",
@@ -174,9 +164,7 @@ export default {
       items: [],
       blocks: [],
       clientDialog: Boolean,
-
       dialog: null,
-
       el: "#v-for-object",
       sales: [],
       url: "",
@@ -187,7 +175,7 @@ export default {
       clientFileDialog: false,
       clientFilesData: [],
       dialogFiles: null,
-      allFilesReceived: false,
+      allFilesReceived: Boolean,
 
       //
       signOffDialog: false,
@@ -219,11 +207,9 @@ export default {
   methods: {
     editItem(event) {
       let targetId = event.currentTarget.id; //Spot on
-      console.log("EDIT ITEM ID", targetId);
       this.salesEditData = this.sales.filter((el) => {
         return el.id === parseInt(targetId);
       });
-      console.log("salesEditData", this.salesEditData);
       this.clientDialog = true;
     },
     async emailItem(event) {
@@ -232,8 +218,7 @@ export default {
       console.log("Email Item SalesEditData = ", this.sales);
       let emailInfo = this.sales.filter((el) => {
         return el.id == parseInt(targetId);
-      });
-      console.log("XXXXX", emailInfo);
+      });     
 
       let data = {
         info: emailInfo,
@@ -308,7 +293,7 @@ export default {
     },
     async deleteItem(event) {
       let targetValue = event.currentTarget.id;
-      console.log(targetValue);
+     //console.log(targetValue);
       let data = {
         id: targetValue,
       };
@@ -333,7 +318,7 @@ export default {
     async showFiles(event) {
       console.log(event);
       let targetVal = event.currentTarget.id;
-      console.log(targetVal);
+      //console.log(targetVal);
       // console.log("Show Files: ", targetVal);
       this.clientFilesData = this.sales.filter((el) => {
         return el.id === parseInt(targetVal);
@@ -355,7 +340,7 @@ export default {
 
     async sendEmail(event) {
       let targetVal = event.currentTarget.id;
-      console.log("Email Sale Info, targetID: ", targetVal);
+      //console.log("Email Sale Info, targetID: ", targetVal);
     },
     checkForAllFiles() {
       let files = [];
@@ -390,7 +375,7 @@ export default {
         console.log("No File");
       }
 
-      console.log("Check for all files, contains = ", contains);
+      // console.log("Check for all files, contains = ", contains);
       console.log("Check for all files, files = ", files);
     },
     closeClientForm(event) {
@@ -407,6 +392,7 @@ export default {
     },
     closeSignOffForm(event) {
       this.signOffDialog = event;
+      this.initialData()
     },
     closeClientFiles(event) {
       console.log("THE EVENT", event);

@@ -24,16 +24,7 @@
                       label="Last name*"
                       required
                     ></v-text-field>
-                  </v-col>
-                  <!--
-                   <v-col   cols="12"    >
-                  <v-select
-                    :items="['0-17', '18-29', '30-54', '54+']"
-                    label="Age*"
-                    required
-                  ></v-select>
-                   </v-col>
-                -->
+                  </v-col>        
 
                   <v-col cols="12">
                     <v-text-field
@@ -50,14 +41,6 @@
                       required
                     ></v-text-field>
                   </v-col>
-
-                  <!--
-                <v-autocomplete
-                  :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                  label="Interests"
-                  multiple
-                ></v-autocomplete>
-              -->
 
                   <v-col cols="12">
                     <label><b> Bank Details </b> </label>
@@ -133,10 +116,8 @@
                       color="brown"
                       value="Laminate"
                     ></v-radio>
-                  </v-radio-group>
-                   
-                  </v-col>
-                 
+                  </v-radio-group>                   
+                  </v-col>                 
 
                   <label> File Uploads </label>
                   <v-col cols="12" sm="12">
@@ -305,16 +286,10 @@ export default {
         console.log("No File");
       }
 
-      console.log(files);
-
-      // console.log(this.blockValue)
-
       let formData = new FormData();
       for (var x = 0; x < files.length; x++) {
-        formData.append("documents", files[x]);
-        // + '.' + files[x].type);  // append mimetype here?
-        // the type var holds 'application/pdf' so I need only the pdf part
-        console.log("FileInfo::: ", files[x]);
+        formData.append("documents", files[x]);  
+        
       }
       console.log("formData = ", formData);
       // formData.append("documents", files)
@@ -328,10 +303,7 @@ export default {
       formData.append("block", this.blockValue);
       formData.append("unit", this.unitValue);
       formData.append("mood", this.mood);
-      formData.append("flooring", this.flooring);
-      
-      // mood 
-      // flooring
+      formData.append("flooring", this.flooring);      
       formData.append("contains", contains);
 
       await axios({
@@ -346,7 +318,6 @@ export default {
           // close the form after completing
           this.closeClientInfo();
         },
-
         (error) => {
           console.log(error);
         }
