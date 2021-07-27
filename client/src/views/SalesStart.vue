@@ -1,75 +1,68 @@
 <template>
-<v-container>
-  <div class="wrapper">
-    <v-row justify="center">
-    <div class="center">
-      <pre>
-      <v-row class="text-center">
-      <v-col cols="12">
-          <div class="centerimg">
-          <!-- image in assets/unfurnished-flat.jpg -->
-          <v-img    class="mx-auto"                    
-              :src="flatPic"
-              max-height = '240'          
-            ></v-img>
-          </div>
-          </v-col>
-                  <v-col cols="6">    
-          <div>
-            <v-autocomplete class="mx-auto"
-              v-model="blockValue"
-              :items="blocks"
-              dense
-              filled
-              item-text="subsectionName"
-              label="Choose Block"
-              @change="chooseUnit"
-            ></v-autocomplete>
-          </div>  
-            </v-col>    
-            
-          <v-col cols="6">
-          <div>
-            <v-autocomplete class="mx-auto"
-              v-model="unitValue"
-              :items="items"
-              dense
-              filled
-              item-text="unitName"
-              label="Choose Unit"
-            ></v-autocomplete>
-          </div>    
-            </v-col>
-       
-         
-        
-      </v-row>
-      </pre>
-      <div>
-        <v-btn v-if="blockValue && unitValue" text @click="getClientInfo"
-          >Create Sale</v-btn
-        >
-      </div>
-    </div>
+  <div>
     <ClientInfo
       :blockValue="blockValue"
       :unitValue="unitValue"
       :dialog="clientDialog"
       @closeForm="closeClientForm"
     />
-     </v-row>
+
+    <v-card class="mx-auto" max-width="100vw">
+      <v-img height="350" :src="flatPic"></v-img>
+
+      <v-card-title>Choose your options</v-card-title>
+
+      <v-card-text>
+        <div style="display: flex">
+          <v-autocomplete
+            v-model="blockValue"
+            :items="blocks"
+            dense
+            filled
+            item-text="subsectionName"
+            label="Choose Block"
+            @change="chooseUnit"
+          ></v-autocomplete>
+        </div>
+        <div>
+          <v-autocomplete
+            v-model="unitValue"
+            :items="items"
+            dense
+            filled
+            item-text="unitName"
+            label="Choose Unit"
+          ></v-autocomplete>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+
+        <v-btn
+          v-if="blockValue && unitValue"
+          text
+          @click="getClientInfo"
+          color="primary"
+          elevation="3"
+          large
+          outlined
+          rounded
+          >Create Sale</v-btn
+        >
+
+        <v-spacer></v-spacer>
+      </v-card-actions>
+      <v-divider class="mx-4"></v-divider>
+    </v-card>
   </div>
- 
-  </v-container>
 </template>
 
 <script>
 import axios from "axios";
 import ClientInfo from "../components/ClientInfo.vue";
-// let url = process.env.VUE_APP_BASEURL;//From .env File(.env must be in src folder. BTW when you change the .env file you need to restart the server)
+
 export default {
   name: "salesstart",
-  //name: "apartment",
   components: {
     ClientInfo,
   },
@@ -84,10 +77,6 @@ export default {
     };
   },
   async mounted() {
-    // console.log("Checking ID");
-    // console.log("Checking ID2");
-    // console.log("Connor", this.$store.state.development.id);
-
     let data = {
       id: this.$store.state.development.id,
     };
@@ -124,26 +113,29 @@ export default {
       let data = {
         id: this.$store.state.development.id,
         subsection: filteredData[0].id,
+        subsectionName: filteredData[0].subsectionName,
+        //subsectionName:
       };
-      await axios({
-        method: "post",
-        url: `http://localhost:3000/getUnitsForOptions`,
-        data: data,
-      })
-        .then(
-          (response) => {
-            let filteredData = response.data.filter((el) => {
-              return el.unitName.substring(2, 1) !== ".";
-            });
-            this.items = filteredData;
-          },
-          (error) => {
-            console.log(error);
-          }
-        )
-        .catch((e) => {
-          console.log(e);
-        });
+      console.log("filteredData for getting subsectionname:", filteredData),
+        await axios({
+          method: "post",
+          url: `http://localhost:3000/getUnitsForOptions`,
+          data: data,
+        })
+          .then(
+            (response) => {
+              let filteredData = response.data.filter((el) => {
+                return el.unitName.substring(2, 1) !== ".";
+              });
+              this.items = filteredData;
+            },
+            (error) => {
+              console.log(error);
+            }
+          )
+          .catch((e) => {
+            console.log(e);
+          });
     },
   },
 };

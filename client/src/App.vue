@@ -4,6 +4,7 @@
       <v-btn text :to="{ name: 'Home' }">Home</v-btn>
       <v-btn text :to="{ name: 'about' }">About</v-btn>
       <v-btn text :to="{ name: 'salesstart' }">Sales</v-btn>
+      <v-btn text :to="{ name: 'salesinfo' }">Sales Info</v-btn>
     </v-app-bar>
 
     <v-main class="mx-auto">

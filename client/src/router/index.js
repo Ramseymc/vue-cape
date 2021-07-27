@@ -23,7 +23,7 @@ const routes = [
       import(/* webpackChunkName: "salesstart" */ "../views/SalesStart.vue"),
   },
   {
-    // step 2 of process - capture client info
+    // data grid of the salesinfo table with CRUD functionality
     path: "/salesinfo",
     name: "salesinfo",
     component: () =>

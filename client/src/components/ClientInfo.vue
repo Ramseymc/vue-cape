@@ -24,16 +24,7 @@
                       label="Last name*"
                       required
                     ></v-text-field>
-                  </v-col>
-                  <!--
-                   <v-col   cols="12"    >
-                  <v-select
-                    :items="['0-17', '18-29', '30-54', '54+']"
-                    label="Age*"
-                    required
-                  ></v-select>
-                   </v-col>
-                -->
+                  </v-col>        
 
                   <v-col cols="12">
                     <v-text-field
@@ -50,14 +41,6 @@
                       required
                     ></v-text-field>
                   </v-col>
-
-                  <!--
-                <v-autocomplete
-                  :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                  label="Interests"
-                  multiple
-                ></v-autocomplete>
-              -->
 
                   <v-col cols="12">
                     <label><b> Bank Details </b> </label>
@@ -95,14 +78,55 @@
                     ></v-text-field>
                   </v-col>
 
+                  <!-- Mood -->
+                  <v-col cols="6" sm="6">
+                    <medium><b>Mood</b></medium>
+                  <v-radio-group v-model="mood">
+                    <v-radio
+                      label="Mood 1"
+                      color="black"
+                      value="Mood1"
+                    ></v-radio>
+                    <v-radio
+                      label="Mood 2"
+                      color="red darken-3"
+                      value="Mood2"
+                    ></v-radio>
+                    <!-- <v-radio
+                      v-for="n in 3"
+                      :key="n"
+                      :label="`Mood ${n}`"
+                      :value="n"
+                    ></v-radio> -->
+                  </v-radio-group>
+                   <small>*indicates required field</small>
+                  </v-col>
+
+                  <!-- Flooring -->
+                  <v-col cols="6" sm="6">
+                    <medium><b>Flooring</b></medium>
+                  <v-radio-group v-model="flooring">
+                    <v-radio
+                      label="Tiles"
+                      color="black"
+                      value="Tiles"
+                    ></v-radio>
+                    <v-radio
+                      label="Laminate"
+                      color="brown"
+                      value="Laminate"
+                    ></v-radio>
+                  </v-radio-group>                   
+                  </v-col>                 
+
                   <label> File Uploads </label>
                   <v-col cols="12" sm="12">
                     <v-file-input
-                      v-model="fileOPT"
+                      v-model="fileOTP"
                       label="OPT"
                       accept="image/png, image/jpeg, image/bmp, image/jpg, application/pdf"
                       filled
-                      hint="OPT"
+                      hint="OTP"
                       persistent-hint
                     ></v-file-input>
                   </v-col>
@@ -155,10 +179,24 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeClientInfo">
+              <v-btn
+                text
+                @click="closeClientInfo"
+                color="primary"
+                elevation="3"
+                outlined
+                rounded
+              >
                 Close
               </v-btn>
-              <v-btn color="blue darken-1" text @click="insertClientData">
+              <v-btn
+                text
+                @click="insertClientData"
+                color="primary"
+                elevation="3"
+                outlined
+                rounded
+              >
                 Save
               </v-btn>
             </v-card-actions>
@@ -183,25 +221,26 @@ export default {
     blockValue: String,
     unitValue: String,
     saleId: String,
-
   },
 
   data() {
     return {
       snackbar: false,
       snackBarmessage: "Successfully Posted!!",
-      firstName: "Connor",
-      lastName: "McLean",
-      iDNumber: "9308175039088",
-      email: "test@gmail.com",
-      bankName: "CAPITEC",
-      accountNumber: "1234567890",
-      accountType: "SAVINGS",
-      fileOPT: null,
+      firstName: "",
+      lastName: "",
+      iDNumber: "",
+      email: "",
+      bankName: "",
+      accountNumber: "",
+      accountType: "",
+      mood: "",
+      flooring: "",
+      fileOTP: null,
       fileId: null,
       fileBank: null,
       filePaySlip: null,
-      fileFica: null,
+      fileFica: null,      
       url: "",
     };
   },
@@ -217,9 +256,9 @@ export default {
       console.log(this.firstName);
       let files = [];
       let contains = [];
-      if (this.fileOPT !== null) {
-        contains.push("fileOTP");  
-        files.push(this.fileOPT) ; // append mimetype here?
+      if (this.fileOTP !== null) {
+        contains.push("fileOTP");
+        files.push(this.fileOTP); // append mimetype here?
       }
       if (this.fileId !== null) {
         contains.push("fileId");
@@ -247,18 +286,12 @@ export default {
         console.log("No File");
       }
 
-      console.log(files);
-
-      // console.log(this.blockValue)
-
       let formData = new FormData();
       for (var x = 0; x < files.length; x++) {
-        formData.append("documents", files[x])
-        // + '.' + files[x].type);  // append mimetype here?
-        // the type var holds 'application/pdf' so I need only the pdf part  
-        console.log("FileInfo::: ", files[x]);
+        formData.append("documents", files[x]);  
+        
       }
-      console.log("formData = " , formData);
+      console.log("formData = ", formData);
       // formData.append("documents", files)
       formData.append("firstName", this.firstName);
       formData.append("lastName", this.lastName);
@@ -269,6 +302,8 @@ export default {
       formData.append("accountType", this.accountType);
       formData.append("block", this.blockValue);
       formData.append("unit", this.unitValue);
+      formData.append("mood", this.mood);
+      formData.append("flooring", this.flooring);      
       formData.append("contains", contains);
 
       await axios({
@@ -278,12 +313,11 @@ export default {
       }).then(
         (response) => {
           console.log(response.data);
-          // little box saying 'Posted Successfully 
+          // little box saying 'Posted Successfully
           this.snackbar = true;
-          // close the form after completing 
+          // close the form after completing
           this.closeClientInfo();
         },
-
         (error) => {
           console.log(error);
         }
