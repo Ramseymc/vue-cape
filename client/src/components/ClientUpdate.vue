@@ -128,10 +128,10 @@
                         editData[0].fileOTP === 'undefined'
                       "
                       v-model="fileOTP"
-                      label="OPT"
+                      label="OTP"
                       accept="image/png, image/jpeg, image/bmp, image/jpg, application/pdf"
                       filled
-                      hint="OPT"
+                      hint="OTP"
                       persistent-hint
                     ></v-file-input>
                   </v-col>

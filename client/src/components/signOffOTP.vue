@@ -3,7 +3,7 @@
     <div class="about">
       <br /><br /><br />
       <v-row justify="center">
-        <v-dialog v-model="dialogFiles" max-width="400px">
+        <v-dialog v-model="dialogFiles" max-width="500px">
           <v-card>
             <v-card-title>
               <span class="text-h5">Sign Off OTP</span>
@@ -12,9 +12,9 @@
               <v-container>
                 <v-row>
                   <v-col
-                    cols="3"
-                    sm="3"
-                    md="3"
+                    cols="4"
+                    sm="4"
+                    md="4"
                     v-if="
                       fileData[0].fileOTP !== null &&
                       fileData[0].fileOTP !== '' &&
@@ -24,12 +24,25 @@
                     <span>Signed OTP</span>
                   </v-col>
 
+                  <v-col
+                    cols="6"
+                    sm="6"
+                    md="6"
+                    v-if="
+                      fileData[0].fileOTP === null ||
+                      fileData[0].fileOTP === '' ||
+                      fileData[0].fileOTP === 'undefined'
+                    "
+                  >
+                    <span>No OTP Document uploaded yet</span>
+                  </v-col>
+
                   <!-- this will be a new file upload for fileOTP -->
                   <v-col
-                    cols="8"
-                    sm="7"
-                    md="7"
-                    lg="9"
+                    cols="6"
+                    sm="8"
+                    md="8"
+                    lg="8"
                     v-if="
                       fileData[0].fileOTP !== null &&
                       fileData[0].fileOTP !== '' &&
