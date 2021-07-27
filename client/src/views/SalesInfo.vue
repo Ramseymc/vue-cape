@@ -72,9 +72,9 @@
                         </v-stepper-step>
                         <v-stepper-step
                           step="1"
-                          :complete="item.allFilesReceived"
+                          :complete="item.step1colour"
                           :id="item.id"
-                          :color="item.allFilesReceived ? 'green accent-3':'lime lighten-2' "
+                          :color="item.step1colour"
                           @click="openSignOff($event)"
                         >
                           Info Received
@@ -175,9 +175,8 @@ export default {
       clientFileDialog: false,
       clientFilesData: [],
       dialogFiles: null,
-      allFilesReceived: Boolean,
 
-      //
+      
       signOffDialog: false,
       signOffData: [],
     };
@@ -232,6 +231,9 @@ export default {
         .then(
           (response) => {
             console.log("CLIENT-SIDE: RESPONSE DATA: ", response.data);
+            if (response.data.success === true) {
+              this.initialData();
+            }
           },
           (error) => {
             console.log("the Error", error);
@@ -271,15 +273,15 @@ export default {
                 el.fileFica === "undefined"
               ) {
                 el.iconColor = "red";
-                el.allFilesReceived = false;
-              } else {
+                el.step1colour = 'lime lighten-2' ;
+              } else {   
                 el.iconColor = "green";
-                el.allFilesReceived = true;
+                el.step1colour = 'green accent-3';
               }
               if (el.salesEmailSent === "Y") {
-                el.emailIconColor = "green";
+                el.emailIconColor = "green darken-1";
               } else {
-                el.emailIconColor = "blue";
+                el.emailIconColor = "orange lighten-2";
               }
             });
           },
@@ -292,8 +294,8 @@ export default {
         });
     },
     async deleteItem(event) {
-      let targetValue = event.currentTarget.id;
-     //console.log(targetValue);
+      // get the id of clicked item (its element has an 'id' which we binded to it during the data call)
+      let targetValue = event.currentTarget.id; 
       let data = {
         id: targetValue,
       };
@@ -308,7 +310,7 @@ export default {
             this.initialData();
           },
           (error) => {
-            console.log("the Error", error);
+            console.log("Error Deleting", error);
           }
         )
         .catch((e) => {
@@ -318,23 +320,18 @@ export default {
     async showFiles(event) {
       console.log(event);
       let targetVal = event.currentTarget.id;
-      //console.log(targetVal);
-      // console.log("Show Files: ", targetVal);
       this.clientFilesData = this.sales.filter((el) => {
         return el.id === parseInt(targetVal);
       });
-      // console.log("clientFilesData", this.clientFilesData);
       this.clientFileDialog = true;
     },
     async openSignOff(event) {
       console.log(event);
       let targetVal = event.currentTarget.id;
       console.log(targetVal);
-      // console.log("Show Files: ", targetVal);
       this.signOffData = this.sales.filter((el) => {
         return el.id === parseInt(targetVal);
       });
-      // console.log("signOffData", this.signOffData);
       this.signOffDialog = true;
     },
     checkForAllFiles() {
@@ -369,12 +366,12 @@ export default {
       } else {
         console.log("No File");
       }
-
-      // console.log("Check for all files, contains = ", contains);
+      
       console.log("Check for all files, files = ", files);
     },
     closeClientForm(event) {
       this.clientDialog = event;
+      this.initialData()
     },
     getClientInfo() {
       this.clientDialog = !this.clientDialog;
@@ -398,9 +395,6 @@ export default {
 </script>
 
 <style scoped>
-/* .formatThis {
-  display: flex;
-  width: 50px;
-} */
+
 </style>
 
