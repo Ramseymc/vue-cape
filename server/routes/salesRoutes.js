@@ -227,7 +227,7 @@ router.post("/updateClientOTP", upload.single("fileOTP"), (req, res) => {
   if (req.body.fileOTP !== null || req.body.fileOTP !== 'undefined' || req.body.fileOTP !== '') {
     let mysql = `UPDATE salesinfo 
       SET fileOTP = '${fileOTP}', signedOff = true WHERE id = ${req.body.id}`
-
+    console.log("||OVERRIDE OTP||" , mysql)
     //console.log("OVERRIDE OTP SQL = ", mysql);
     // execute the sql and return the res.json
     pool.getConnection(function (err, connection) {

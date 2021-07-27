@@ -49,7 +49,7 @@
                       <v-list-item-subtitle
                         v-text="item.unit"
                       ></v-list-item-subtitle>
-                      
+
                       <v-list-item-subtitle
                         v-text="item.lastname"
                       ></v-list-item-subtitle>
@@ -66,9 +66,8 @@
                           :id="item.id"
                           color="blue darken-2"
                           editable
-                           @click="showActions = !showActions"
+                          @click="showActions = !showActions"
                         >
-
                         </v-stepper-step>
                         <v-stepper-step
                           step="1"
@@ -84,13 +83,13 @@
 
                         <v-stepper-step
                           step="2"
-                          color="indigo" 
-                          :complete="item.signedOff > 0"                                
+                          color="indigo"
+                          :complete="item.signedOff > 0"
                         >
                           Signed
                         </v-stepper-step>
                         <v-divider></v-divider>
-                        
+
                         <v-stepper-step step="3" :id="item.id" color="green">
                           Awaiting confirmation
                         </v-stepper-step>
@@ -100,7 +99,7 @@
                           Next
                         </v-stepper-step>
                         <v-divider></v-divider>
-                        
+
                         <v-stepper-step step="5" :id="item.id" color="green">
                           Next
                         </v-stepper-step>
@@ -111,8 +110,8 @@
                         </v-stepper-step>
                       </v-stepper-header>
                     </v-stepper>
-                  </v-list-item-content>             
-                </v-list-item>          
+                  </v-list-item-content>
+                </v-list-item>
               </template>
             </v-list-item-group>
           </v-list>
@@ -136,8 +135,7 @@
       :dialogFiles="signOffDialog"
       :fileData="signOffData"
       @closeForm="closeSignOffForm"
-    /> 
-    
+    />
   </v-container>
 </template>
 
@@ -176,7 +174,6 @@ export default {
       clientFilesData: [],
       dialogFiles: null,
 
-      
       signOffDialog: false,
       signOffData: [],
     };
@@ -217,7 +214,7 @@ export default {
       console.log("Email Item SalesEditData = ", this.sales);
       let emailInfo = this.sales.filter((el) => {
         return el.id == parseInt(targetId);
-      });     
+      });
 
       let data = {
         info: emailInfo,
@@ -273,10 +270,10 @@ export default {
                 el.fileFica === "undefined"
               ) {
                 el.iconColor = "red";
-                el.step1colour = 'lime lighten-2' ;
-              } else {   
+                el.step1colour = "lime lighten-2";
+              } else {
                 el.iconColor = "green";
-                el.step1colour = 'green accent-3';
+                el.step1colour = "green accent-3";
               }
               if (el.salesEmailSent === "Y") {
                 el.emailIconColor = "green darken-1";
@@ -295,7 +292,7 @@ export default {
     },
     async deleteItem(event) {
       // get the id of clicked item (its element has an 'id' which we binded to it during the data call)
-      let targetValue = event.currentTarget.id; 
+      let targetValue = event.currentTarget.id;
       let data = {
         id: targetValue,
       };
@@ -366,12 +363,12 @@ export default {
       } else {
         console.log("No File");
       }
-      
+
       console.log("Check for all files, files = ", files);
     },
     closeClientForm(event) {
       this.clientDialog = event;
-      this.initialData()
+      this.initialData();
     },
     getClientInfo() {
       this.clientDialog = !this.clientDialog;
@@ -384,7 +381,7 @@ export default {
     },
     closeSignOffForm(event) {
       this.signOffDialog = event;
-      this.initialData()
+      this.initialData();
     },
     closeClientFiles(event) {
       console.log("THE EVENT", event);
@@ -394,7 +391,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-</style>
-
+<style scoped></style>

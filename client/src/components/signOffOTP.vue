@@ -59,7 +59,6 @@
                       hint="OTP"
                       persistent-hint
                     ></v-file-input>
-                                        
                   </v-col>
                 </v-row>
               </v-container>
@@ -103,14 +102,14 @@ export default {
       url: "",
       arrFicaFiles: [],
       arrPaySlipFiles: [],
-      fileOTP: null
+      fileOTP: null,
     };
   },
 
   methods: {
     async updateClientOTP() {
       let formData = new FormData();
-       
+
       if (this.fileOTP !== null) {
         formData.append("fileOTP", this.fileOTP);
         formData.append("id", this.fileData[0].id);
@@ -118,7 +117,7 @@ export default {
       await axios({
         method: "post",
         url: `${this.url}/updateClientOTP`,
-        data: formData
+        data: formData,
       }).then(
         (response) => {
           console.log(response.data);
@@ -141,7 +140,7 @@ export default {
   mounted() {
     this.url = `${this.$store.state.url}`;
     console.log("signOffOTP Mounted EditData= ", this.fileData[0]);
-  
+
     setTimeout(() => {
       console.log("ClientFiles: ", this.fileData);
     }, 4000);
