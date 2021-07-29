@@ -1,4 +1,11 @@
 <template>
+<!-- 
+          TYPE: View
+          NAME: SalesStart
+       PURPOSE: Landing Page for 'Sales'
+          DATE: July 2021
+          AUTH: Connor McLean, Wayne Bruton
+ -->
   <div>
     <ClientInfo
       :blockValue="blockValue"

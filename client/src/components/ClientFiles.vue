@@ -1,4 +1,11 @@
 <template>
+<!-- 
+          TYPE: Component
+          NAME: ClientFiles
+       PURPOSE: Dialog box to view files uploaded to a sale
+          DATE: July 2021
+          AUTH: Connor McLean, Wayne Bruton
+ -->
   <v-container>
     <div class="about">
       <br /><br /><br />

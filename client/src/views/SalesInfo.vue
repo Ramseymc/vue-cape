@@ -1,4 +1,11 @@
 <template>
+<!-- 
+          TYPE: View
+          NAME: SalesInfo
+       PURPOSE: a list of the sales with actions (update, delete, edit, view files)
+          DATE: July 2021
+          AUTH: Connor McLean, Wayne Bruton
+ -->
   <v-container>
     <v-row justify="center">
       <div class="about">

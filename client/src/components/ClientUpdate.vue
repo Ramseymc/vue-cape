@@ -1,4 +1,11 @@
 <template>
+<!-- 
+          TYPE: Component
+          NAME: ClientUpdate
+       PURPOSE: Dialog form to maintain(update) a client sales 
+          DATE: July 2021
+          AUTH: Connor McLean, Wayne Bruton
+ -->
   <v-container>
     <div class="about">
       <br />

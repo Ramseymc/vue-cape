@@ -1,4 +1,11 @@
 <template>
+<!-- 
+          TYPE: Component
+          NAME: ClientInfo
+       PURPOSE: Dialog form to create a new sale
+          DATE: July 2021
+          AUTH: Connor McLean, Wayne Bruton
+ -->
   <v-container>
     <div class="about">
       <br /><br /><br />
