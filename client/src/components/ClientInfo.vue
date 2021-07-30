@@ -24,7 +24,7 @@
                       label="Last name*"
                       required
                     ></v-text-field>
-                  </v-col>        
+                  </v-col>
 
                   <v-col cols="12">
                     <v-text-field
@@ -81,43 +81,43 @@
                   <!-- Mood -->
                   <v-col cols="6" sm="6">
                     <medium><b>Mood</b></medium>
-                  <v-radio-group v-model="mood">
-                    <v-radio
-                      label="Mood 1"
-                      color="black"
-                      value="Mood1"
-                    ></v-radio>
-                    <v-radio
-                      label="Mood 2"
-                      color="red darken-3"
-                      value="Mood2"
-                    ></v-radio>
-                    <!-- <v-radio
+                    <v-radio-group v-model="mood">
+                      <v-radio
+                        label="Mood 1"
+                        color="black"
+                        value="Mood1"
+                      ></v-radio>
+                      <v-radio
+                        label="Mood 2"
+                        color="red darken-3"
+                        value="Mood2"
+                      ></v-radio>
+                      <!-- <v-radio
                       v-for="n in 3"
                       :key="n"
                       :label="`Mood ${n}`"
                       :value="n"
                     ></v-radio> -->
-                  </v-radio-group>
-                   <small>*indicates required field</small>
+                    </v-radio-group>
+                    <small>*indicates required field</small>
                   </v-col>
 
                   <!-- Flooring -->
                   <v-col cols="6" sm="6">
                     <medium><b>Flooring</b></medium>
-                  <v-radio-group v-model="flooring">
-                    <v-radio
-                      label="Tiles"
-                      color="black"
-                      value="Tiles"
-                    ></v-radio>
-                    <v-radio
-                      label="Laminate"
-                      color="brown"
-                      value="Laminate"
-                    ></v-radio>
-                  </v-radio-group>                   
-                  </v-col>                 
+                    <v-radio-group v-model="flooring">
+                      <v-radio
+                        label="Tiles"
+                        color="black"
+                        value="Tiles"
+                      ></v-radio>
+                      <v-radio
+                        label="Laminate"
+                        color="brown"
+                        value="Laminate"
+                      ></v-radio>
+                    </v-radio-group>
+                  </v-col>
 
                   <label> File Uploads </label>
                   <v-col cols="12" sm="12">
@@ -240,7 +240,7 @@ export default {
       fileId: null,
       fileBank: null,
       filePaySlip: null,
-      fileFica: null,      
+      fileFica: null,
       url: "",
     };
   },
@@ -288,8 +288,7 @@ export default {
 
       let formData = new FormData();
       for (var x = 0; x < files.length; x++) {
-        formData.append("documents", files[x]);  
-        
+        formData.append("documents", files[x]);
       }
       console.log("formData = ", formData);
       // formData.append("documents", files)
@@ -303,7 +302,7 @@ export default {
       formData.append("block", this.blockValue);
       formData.append("unit", this.unitValue);
       formData.append("mood", this.mood);
-      formData.append("flooring", this.flooring);      
+      formData.append("flooring", this.flooring);
       formData.append("contains", contains);
 
       await axios({

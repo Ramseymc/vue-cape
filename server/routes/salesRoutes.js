@@ -126,8 +126,6 @@ router.post("/deleteSalesRecord", (req, res) => {
   });
 });
 
-
-
 router.post("/sendSalesInfoEmail", (req, res) => {
   //let mysql = `select first_name, last_name, emailAddress from suppliers where contactID = '${req.body.supplier}'`;
   //let filename = req.body.PONumber;
@@ -173,6 +171,7 @@ router.post("/sendSalesInfoEmail", (req, res) => {
           if (error) {
             console.log("THE ERROR", error);
           } else {
+
             console.log(result);
             res.json({
               success: true,
@@ -228,7 +227,7 @@ router.post("/updateClientOTP", upload.single("fileOTP"), (req, res) => {
   if (req.body.fileOTP !== null || req.body.fileOTP !== 'undefined' || req.body.fileOTP !== '') {
     let mysql = `UPDATE salesinfo 
       SET fileOTP = '${fileOTP}', signedOff = true WHERE id = ${req.body.id}`
-
+    console.log("||OVERRIDE OTP||" , mysql)
     //console.log("OVERRIDE OTP SQL = ", mysql);
     // execute the sql and return the res.json
     pool.getConnection(function (err, connection) {
@@ -305,6 +304,7 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
        flooring='${req.body.flooring}', `
 
   // dynamicSQL file uploads 
+  // OTP
   let otpSQL = fileDetails.filter((el) => {
 
     return el.fileType === 'fileOTP'
@@ -318,6 +318,7 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
     })
   }
 
+  // ID
   let idSQL = fileDetails.filter((el) => {
     console.log("Element in the filter file details array:", el);
     return el.fileType === 'fileId'
@@ -331,7 +332,7 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
     })
   }
 
-  // should we get filebank from the control (OKAY2) message ? // Ramsey 1 - file uploads in update using dynamic sql 
+  // BANK  
   let bankSQL = fileDetails.filter((el) => {
     console.log("Element in the filter file details array:", el);
     return el.fileType === 'fileBank'
@@ -344,10 +345,11 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
     })
   }
 
+  // FICA
   let ficaSQL = fileDetails.filter((el) => {
     console.log("Element in the filter file details array:", el);
     return el.fileType === 'fileFica'
-  })  // does this below need to be inside the loop?
+  })  
   console.log(chalk.green("ficaSQL = ", ficaSQL))
   let insertArrayFica = []
 
@@ -358,10 +360,11 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
     additionalSQL = `${additionalSQL}, fileFica = '${insertArrayFica.join(",")}'`
   }
 
+  // PAYSLIP
   let paySlipSQL = fileDetails.filter((el) => {
     console.log("Element in the filter file details array:", el);
     return el.fileType === 'filePaySlip'
-  })  // does this below need to be inside the loop?
+  })  
   console.log(chalk.green("paySlipSQL = ", paySlipSQL))
   let insertArrayPaySlip = []
 
@@ -371,7 +374,7 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
     })
     additionalSQL = `${additionalSQL}, filePaySlip = '${insertArrayPaySlip.join(",")}'`
   }
-  // dynamic inserts for files, done  ( does input two of each for multiple )
+  // dynamic inserts for files, done 
 
   mysql = `${mysql} ${additionalSQL} WHERE id = ${req.body.id}`
   console.log(chalk.red("FINALmySQL UPDATE Satement, in salesRoutes.js = ", mysql));

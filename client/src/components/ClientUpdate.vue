@@ -72,12 +72,11 @@
                       required
                     ></v-text-field>
                   </v-col>
-                  
+
                   <!-- Mood -->
                   <v-col cols="4" sm="4">
                     <medium><b>Mood</b></medium>
-                    <v-radio-group 
-                      v-model="editData[0].mood">
+                    <v-radio-group v-model="editData[0].mood">
                       <v-radio
                         label="Mood 1"
                         color="black"
@@ -86,7 +85,7 @@
                       <v-radio
                         label="Mood 2"
                         color="red darken-3"
-                      value="Mood 2"
+                        value="Mood 2"
                       ></v-radio>
                       <!-- <v-radio
                       v-for="n in 3"
@@ -95,7 +94,7 @@
                       :value="n"
                     ></v-radio> -->
                     </v-radio-group>
-                     <small>*indicates required field</small>
+                    <small>*indicates required field</small>
                   </v-col>
 
                   <!-- Flooring -->
@@ -113,10 +112,8 @@
                         value="Laminate"
                       ></v-radio>
                     </v-radio-group>
-                 
                   </v-col>
 
-                
                   <!-- File Uploads  -->
 
                   <!-- All files received -->
@@ -128,10 +125,10 @@
                         editData[0].fileOTP === 'undefined'
                       "
                       v-model="fileOTP"
-                      label="OPT"
+                      label="OTP"
                       accept="image/png, image/jpeg, image/bmp, image/jpg, application/pdf"
                       filled
-                      hint="OPT"
+                      hint="OTP"
                       persistent-hint
                     ></v-file-input>
                   </v-col>
@@ -266,18 +263,18 @@ export default {
     this.editData.forEach((el) => {
       el.id = el.id.toString();
       if (el.flooring === "") {
-      el.flooring = "Tiles"
+        el.flooring = "Tiles";
       }
       if (el.mood === "") {
-      el.mood = "Mood 1"
+        el.mood = "Mood 1";
       }
     });
     //console.log(this.editData)
   },
 
   mounted() {
-    this.url = this.$store.state.url;   
-    //console.log("ClientUpdate Mounted EditData= ", this.editData);   
+    this.url = this.$store.state.url;
+    //console.log("ClientUpdate Mounted EditData= ", this.editData);
   },
 
   methods: {
@@ -321,10 +318,10 @@ export default {
 
       // console.log("contains", contains);
       // console.log("files", files);
-      let formData = new FormData();    
+      let formData = new FormData();
 
       for (var x = 0; x < files.length; x++) {
-        formData.append("documents", files[x]);       
+        formData.append("documents", files[x]);
         //console.log("FileInfo::: ", files[x]);
       }
       formData.append("firstName", this.editData[0].firstname);
