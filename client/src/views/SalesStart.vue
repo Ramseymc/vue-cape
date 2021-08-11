@@ -1,5 +1,5 @@
 <template>
-<!-- 
+  <!-- 
           TYPE: View
           NAME: SalesStart
        PURPOSE: Landing Page for 'Sales'

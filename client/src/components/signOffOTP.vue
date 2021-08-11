@@ -1,5 +1,5 @@
 <template>
-<!-- 
+  <!-- 
           TYPE: Component
           NAME: singOffOTP
        PURPOSE: Dialog form to replace the OTP with the updated final signed version

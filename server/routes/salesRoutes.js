@@ -53,22 +53,8 @@ router.post("/getblocksForOptions", (req, res) => {
   });
 });
 
-// get avail units for selected development and block
-router.post("/getUnitsForOptions", (req, res) => {
-  let mysql = `SELECT 
-      u.unitName 
-    FROM units u 
-    LEFT JOIN subsection s ON s.id = u.subsection 
-    LEFT JOIN salesinfo si ON si.unit = u.unitName AND si.block = s.subsectionName 
-    WHERE u.unitName NOT IN 
-      ( SELECT 
-        u.unitName 
-        FROM units u JOIN subsection s ON s.id = u.subsection 
-        JOIN salesinfo si ON si.unit = u.unitName AND si.block = s.subsectionName 
-        WHERE s.subsectionName = '${req.body.subsectionName}' ) 
-    AND s.subsectionName = '${req.body.subsectionName}';`
-
-  // console.log(mysql);
+router.post("/getSalesDataForSale", (req, res) => {
+  let mysql = `select * from salesData where unit = ${req.body.unit}`
   pool.getConnection(function (err, connection) {
     if (err) {
       connection.release();
@@ -78,16 +64,103 @@ router.post("/getUnitsForOptions", (req, res) => {
       if (error) {
         console.log(error);
       } else {
+        console.log("RESULT New",result)
+        res.json(result);
+      }
+    });
+    connection.release();
+  });
+})
+
+
+router.post("/getUnitPlanTypes", (req, res) => {
+  console.log(req.body)
+  let mysql = `select unit_type from salesData s, units u where u.id = s.unit and u.unitName = '${req.body.unitValue}'`
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      connection.release();
+      resizeBy.send("Error with connection");
+    }
+    connection.query(mysql, function (error, result) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("RESULT",result)
+        res.json(result);
+      }
+    });
+    connection.release();
+  });
+})
+
+
+
+
+
+
+router.post("/getAvailableUnits", (req,res) =>{
+  console.log(req.body) // this is the only changed method the rest are new
+    let mysql = `select u.id, s.unit, u.unitName from salesData s, units u where u.id = s.unit and u.subsection = ${req.body.subsection} and s.sold = false and s.development = ${req.body.id}`
+
+  console.log("Hello",mysql);
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      connection.release();
+      resizeBy.send("Error with connection");
+    }
+    connection.query(mysql, function (error, result) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(result)
+        res.json(result);
+      }
+    });
+    connection.release();
+  });
+
+})
+
+
+// get avail units for selected development and block
+router.post("/getUnitsForOptions", (req, res) => {
+  // let mysql = `SELECT 
+  //     u.unitName 
+  //   FROM units u 
+  //   LEFT JOIN subsection s ON s.id = u.subsection 
+  //   LEFT JOIN salesinfo si ON si.unit = u.unitName AND si.block = s.subsectionName 
+  //   WHERE u.unitName NOT IN 
+  //     ( SELECT 
+  //       u.unitName 
+  //       FROM units u JOIN subsection s ON s.id = u.subsection 
+  //       JOIN salesinfo si ON si.unit = u.unitName AND si.block = s.subsectionName 
+  //       WHERE s.subsectionName = '${req.body.subsectionName}' ) 
+  //   AND s.subsectionName = '${req.body.subsectionName}';`;
+  console.log(req.body)
+    let mysql = `select s.unit, u.unitName from salesData s, units u where u.id = s.unit and u.subsection = ${req.body.subsection} and s.sold = false and s.development = ${req.body.development}`
+
+  console.log("Hello",mysql);
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      connection.release();
+      resizeBy.send("Error with connection");
+    }
+    connection.query(mysql, function (error, result) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log(result)
         res.json(result);
       }
     });
     connection.release();
   });
 });
-
+//
 // get all valid salesInfo
 router.post("/getClientInfoForSalesInfo", (req, res) => {
-  let mysql = `select * from salesinfo where id > 0 and firstName > '';`
+  let mysql = `select si.*, sd.parking, sd.bay_no, sd.extras, sd.deductions, sd.contract_price, sd.base_price, sd.sold, sd.actualsale_date from salesinfo si join units u on si.unit = u.unitName join salesdata sd on sd.unit = u.id where si.id > 0 and si.firstName > '' ;`
+  //console.log("SERVER-SIDE getting data for salesinfo", mysql);
   pool.getConnection(function (err, connection) {
     if (err) {
       connection.release();
@@ -108,7 +181,7 @@ router.post("/getClientInfoForSalesInfo", (req, res) => {
 
 // delete salesinfo record matching 'id'
 router.post("/deleteSalesRecord", (req, res) => {
-  let mysql = `delete from salesinfo where id = ${req.body.id}`
+  let mysql = `delete from salesinfo where id = ${req.body.id}; update salesdata inner join units on units.id = salesdata.unit set sold = 0, extras = 0, deductions = 0, parking = 0, contract)price = base_price WHERE units.unitName = '${req.body.unit}' ;`
   pool.getConnection(function (err, connection) {
     if (err) {
       connection.release();
@@ -327,8 +400,21 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
 
   if (idSQL.length > 0) {
     // 
-    bankSQL.forEach((el) => {
+    idSQL.forEach((el) => {
       additionalSQL = `${additionalSQL}, fileId = '${el.fileName}'`
+    })
+  }
+  // ID 2nd Person
+  let twoPersonFileIDSQL = fileDetails.filter((el) => {
+    console.log("Element in the filter file details array:", el);
+    return el.fileType === 'personTwoFileID'
+  })  // does this below need to be inside the loop?
+  console.log(chalk.green("twoPersonFileID = ", idSQL))
+
+  if (twoPersonFileIDSQL.length > 0) {
+    // 
+    twoPersonFileIDSQL.forEach((el) => {
+      additionalSQL = `${additionalSQL}, personTwoFileID = '${el.fileName}'`
     })
   }
 
@@ -342,6 +428,18 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
     // 
     bankSQL.forEach((el) => {
       additionalSQL = `${additionalSQL}, fileBank = '${el.fileName}'`
+    })
+  }
+  // BANK 2nd Person
+  let twoPersonFileBankSQL = fileDetails.filter((el) => {
+    console.log("Element in the filter file details array:", el);
+    return el.fileType === 'personTwoFileBank'
+  })  
+  console.log(chalk.green("twoPersonFileBankSQL = ", twoPersonFileBankSQL))
+  if (twoPersonFileBankSQL.length > 0) {
+    // 
+    twoPersonFileBankSQL.forEach((el) => {
+      additionalSQL = `${additionalSQL}, personTwoFileBank = '${el.fileName}'`
     })
   }
 
@@ -359,6 +457,20 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
     })
     additionalSQL = `${additionalSQL}, fileFica = '${insertArrayFica.join(",")}'`
   }
+  // FICA 2nd person
+  let twoPersonFileFicaSQL = fileDetails.filter((el) => {
+    console.log("Element in the filter file details array:", el);
+    return el.fileType === 'personTwoFileFica'
+  })  
+  console.log(chalk.green("ficaSQL = ", twoPersonFileFicaSQL))
+  let insertTwoPersonArrayFica = []
+
+  if (twoPersonFileFicaSQL.length > 0) {
+    twoPersonFileFicaSQL.forEach((el) => {
+      insertTwoPersonArrayFica.push(el.fileName)
+    })
+    additionalSQL = `${additionalSQL}, personTwoFileFica = '${insertTwoPersonArrayFica.join(",")}'`
+  }
 
   // PAYSLIP
   let paySlipSQL = fileDetails.filter((el) => {
@@ -373,6 +485,20 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
       insertArrayPaySlip.push(el.fileName)
     })
     additionalSQL = `${additionalSQL}, filePaySlip = '${insertArrayPaySlip.join(",")}'`
+  }
+  // PAYSLIP 2nd Person
+  let twoPersonPayslipSQL = fileDetails.filter((el) => {
+    console.log("Element in the filter file details array:", el);
+    return el.fileType === 'personTwoFilePaySlip'
+  })  
+  console.log(chalk.green("paySlipSQL = ", twoPersonPayslipSQL))
+  let insertTwoPersonArrayPaySlip = []
+
+  if (twoPersonPayslipSQL.length > 0) {
+    twoPersonPayslipSQL.forEach((el) => {
+      insertTwoPersonArrayPaySlip.push(el.fileName)
+    })
+    additionalSQL = `${additionalSQL}, personTwoFilePaySlip = '${insertTwoPersonArrayPaySlip.join(",")}'`
   }
   // dynamic inserts for files, done 
 
@@ -399,107 +525,191 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
 })
 
 router.post("/createClient", upload.array("documents"), (req, res) => {
-
+  console.log(req.body)
+  console.log(req.files)
   // pull the mimetype from req.files - futureproof
-  let fileDetails = []
-  let contains = req.body.contains.split(",")
+  let fileDetails = [];
 
-  contains.forEach((el) => {
-    req.files.forEach((el2) => {
-      el2.filenameA = `${el2.filename}.${el2.mimetype.split("/")[1]}`
-      let insert = {
-        fileType: el,
-        fileName: el2.filenameA,
-        originalName: el2.filename
-      }
-      fileDetails.push(insert)
-    })
-  })
+  if (req.files.length) {
+  let contains = req.body.contains.split(",");
+
+  contains.forEach((el, index) => {
+    //1 - 5 loops
+    let mainIndex = index;
+
+    // req.files[mainIndex]
+    // req.files.forEach((el2) => {
+    //another 5 loops (maybe more if multi)
+
+    // el2.filenameA = `${el2.filename}.${el2.mimetype.split("/")[1]}`
+    let insert = {
+      fileType: el,
+      fileName: `${req.files[mainIndex].filename}.${
+        req.files[mainIndex].mimetype.split("/")[1]
+      }`,
+      originalName: req.files[mainIndex].filename,
+    };
+    fileDetails.push(insert);
+  });
+
+  console.log("fileDetails", fileDetails);
+
 
   fileDetails.forEach((el) => {
     let filtered = req.files.filter((el2) => {
-      return el2.filename === el.originalName
-    })
-    el.fileNameUpdated = `${el.fileName}`
-    fs.rename(`public/uploads/${el.originalName}`, `public/uploads/${el.fileNameUpdated}`, (err) => {
-      if (err)
-        console.log("Error renaming", err)
-      //throw err                      
-    })
-  })
+      return el2.filename === el.originalName;
+    });
+    el.fileNameUpdated = `${el.fileName}`;
+    fs.rename(
+      `public/uploads/${el.originalName}`,
+      `public/uploads/${el.fileNameUpdated}`,
+      (err) => {
+        if (err) console.log("Error renaming", err);
+        //throw err
+      }
+    );
+  });
+}
 
   let fileFica;
   let fileOTP;
   let filePaySlip;
   let fileBank;
   let fileId;
+  let personTwoFileID;
+  let personTwoFileBank;
+  let personTwoFilePaySlip;
+  let personTwoFileFica;  
 
   if (fileDetails.length) {
     fileOTP = fileDetails.filter((el) => {
-      return el.fileType === 'fileOTP'
-    })
+      return el.fileType === "fileOTP";
+    });
     if (fileOTP.length) {
-      fileOTP = fileOTP[0].fileName
+      fileOTP = fileOTP[0].fileName;
     } else {
-      fileOTP = ""
+      fileOTP = "";
     }
+
     fileBank = fileDetails.filter((el) => {
-      return el.fileType === 'fileBank'
-    })
+      return el.fileType === "fileBank";
+    });
     if (fileBank.length) {
-      fileBank = fileBank[0].fileName
+      fileBank = fileBank[0].fileName;
     } else {
-      fileBank = ""
+      fileBank = "";
     }
+    personTwoFileBank = fileDetails.filter((el) => {
+      return el.fileType === "personTwoFileBank";
+    });
+    if (personTwoFileBank.length) {
+      personTwoFileBank = personTwoFileBank[0].fileName;
+    } else {
+      personTwoFileBank = "";
+    }
+
     fileId = fileDetails.filter((el) => {
-      return el.fileType === 'fileId'
-    })
+      return el.fileType === "fileId";
+    });
     if (fileId.length) {
-      fileId = fileId[0].fileName
+      fileId = fileId[0].fileName;
     } else {
-      fileId = ""
+      fileId = "";
+    } 
+    personTwoFileID = fileDetails.filter((el) => {
+      return el.fileType === "personTwoFileID";
+    });
+    if (personTwoFileID.length) {
+      personTwoFileID = personTwoFileID[0].fileName;
+    } else {
+      personTwoFileID = "";
     }
+
     fileFica = fileDetails.filter((el) => {
-      return el.fileType === 'fileFica'
-    })
+      return el.fileType === "fileFica";
+    });
     if (fileFica.length === 1) {
-      fileFica = fileFica[0].fileName
+      fileFica = fileFica[0].fileName;
     } else if (fileFica.length > 1) {
-      let ficaData = []
+      let ficaData = [];
       fileFica.forEach((el) => {
-        ficaData.push(el.fileName)
-      })
-      fileFica = ficaData.join(",")
+        ficaData.push(el.fileName);
+      });
+      fileFica = ficaData.join(",");
     } else {
-      fileFica = ""
+      fileFica = "";
+    }
+    personTwoFileFica = fileDetails.filter((el) => {
+      return el.fileType === "personTwoFileFica";
+    });
+    if (personTwoFileFica.length === 1) {
+      personTwoFileFica = personTwoFileFica[0].fileName;
+    } else if (personTwoFileFica.length > 1) {
+      let ficaData = [];
+      personTwoFileFica.forEach((el) => {
+        ficaData.push(el.fileName);
+      });
+      personTwoFileFica = ficaData.join(",");
+    } else {
+      personTwoFileFica = "";
     }
 
     filePaySlip = fileDetails.filter((el) => {
-      return el.fileType === 'filePaySlip'
-    })
+      return el.fileType === "filePaySlip";
+    });
     if (filePaySlip.length === 1) {
-      filePaySlip = filePaySlip[0].fileName
+      filePaySlip = filePaySlip[0].fileName;
     } else if (filePaySlip.length > 1) {
-      let fileData = []
+      let fileData = [];
       filePaySlip.forEach((el) => {
-        fileData.push(el.fileName)
-      })
-      filePaySlip = fileData.join(",")
+        fileData.push(el.fileName);
+      });
+      filePaySlip = fileData.join(",");
     } else {
-      filePaySlip = ""
+      filePaySlip = "";
+    }
+    personTwoFilePaySlip = fileDetails.filter((el) => {
+      return el.fileType === "personTwoFilePaySlip";
+    });
+    if (personTwoFilePaySlip.length === 1) {
+      personTwoFilePaySlip = personTwoFilePaySlip[0].fileName;
+    } else if (personTwoFilePaySlip.length > 1) {
+      let fileData = [];
+      personTwoFilePaySlip.forEach((el) => {
+        fileData.push(el.fileName);
+      });
+      personTwoFilePaySlip = fileData.join(",");
+    } else {
+      personTwoFilePaySlip = "";
     }
   }
+
   var today = new Date();
-  var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-  var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  var dateTime = date + ' ' + time;
+  var date =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  var time =
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  var dateTime = date + " " + time;
 
-  let mysql = `INSERT INTO salesinfo (firstname, lastname, iDNumber, email, bankName, accountNumber, accountType, block, unit, mood, flooring, fileOTP, fileId, fileBank, filePaySlip, fileFica, dateCreated) VALUES (
-                '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${req.body.mood}','${req.body.flooring}','${fileOTP}','${fileId}',
-                '${fileBank}','${filePaySlip}','${fileFica}','${dateTime}'
-      );`
+  let mysql = `INSERT INTO salesinfo (firstname, lastname, iDNumber, marital, email, bankName, accountNumber, accountType, block, unit, mood, flooring, fileOTP, fileId, fileBank, filePaySlip, fileFica, dateCreated, floorplan, mobile, landline, postalAddress, residentialAddress, salesAgent, salesAgentPhone, personTwoFirstName, personTwoLastName, personTwoIDNumber, personTwoEmail, personTwoBankName, personTwoAccountNumber, personTwoAccountType, personTwoFileID, personTwoFileBank, personTwoFilePaySlip, personTwoFileFica, personTwoMobile, personTwoLandline, personTwoPostalAddress, personTwoResidentialAddress, salePerson, saleBuyers, saleType) VALUES (
+                '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}', '${req.body.marital}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${req.body.mood}','${req.body.flooring}','${fileOTP}','${fileId}', '${fileBank}','${filePaySlip}','${fileFica}','${dateTime}','${req.body.floorplan}','${req.body.mobile}','${req.body.landline}','${req.body.postalAddress}','${req.body.residentialAddress}','${req.body.salesAgent}','${req.body.salesAgentPhone}', '${req.body.personTwoFirstName}' , '${req.body.personTwoLastName}' , '${req.body.personTwoIDNumber}' , '${req.body.personTwoEmail}' , '${req.body.personTwoBankName}', '${req.body.personTwoAccountNumber}', '${req.body.personTwoAccountType}', ${personTwoFileID}, ${personTwoFilePaySlip}, ${personTwoFileFica}, '${req.body.personTwoMobile}', '${req.body.personTwoLandline}', '${req.body.personTwoPostalAddress}', '${req.body.personTwoResidentialAddress}', '${req.body.salePerson}', '${req.body.saleBuyers}', '${req.body.saleType}';
 
-  console.log(chalk.red(mysql))
+           UPDATE salesdata sd 
+             INNER JOIN units u ON sd.unit = u.id 
+           SET
+            sd.base_price = ${parseFloat(req.body.base_price)},
+            sd.contract_price = ${parseFloat(req.body.contract_price)}, 
+            sd.parking = ${parseFloat(req.body.parking)}, 
+            sd.extras = '${parseFloat(req.body.extras)}', 
+            sd.deductions = '${parseFloat(req.body.deductions)}', 
+            sd.sold = 1, 
+            sd.actualsale_date = '${dateTime}'                        
+           WHERE u.unitName = '${req.body.unit}'
+      )`;
+
+
+
+  console.log(chalk.red(mysql));
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -511,13 +721,13 @@ router.post("/createClient", upload.array("documents"), (req, res) => {
         console.log(error);
       } else {
         res.json(result);
-        console.log("After INSERT stmnt")
-        console.log(result)
+        console.log("After INSERT stmnt");
+        console.log(result);
       }
     });
     connection.release();
-  })
-})
+  });
+});
 
 // CRM 1 : Transporter / formatting here 
 let transporter = nodemailer.createTransport({

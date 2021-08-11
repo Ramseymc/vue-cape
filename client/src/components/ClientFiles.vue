@@ -1,4 +1,3 @@
-<template>
 <!-- 
           TYPE: Component
           NAME: ClientFiles
@@ -6,6 +5,7 @@
           DATE: July 2021
           AUTH: Connor McLean, Wayne Bruton
  -->
+<template>
   <v-container>
     <div class="about">
       <br /><br /><br />
@@ -42,9 +42,9 @@
                   >
                     <v-spacer></v-spacer>
                     <a
-                      :href="`http://localhost:3000/uploads/${fileData[0].fileOTP}`"
+                      :href="`${url}${fileData[0].fileOTP}`"
                       download
-                      target
+                      target="_blank"
                       style="text-decoration: none"
                     >
                       <v-icon color="green">mdi-file-pdf-box</v-icon>
@@ -75,9 +75,9 @@
                   >
                     <v-spacer></v-spacer>
                     <a
-                      :href="`http://localhost:3000/uploads/${fileData[0].fileId}`"
+                      :href="`${url}${fileData[0].fileId}`"
                       download
-                      target
+                      target="_blank"
                       style="text-decoration: none"
                     >
                       <v-icon color="green">mdi-file-pdf-box</v-icon>
@@ -109,9 +109,9 @@
                   >
                     <v-spacer></v-spacer>
                     <a
-                      :href="`http://localhost:3000/uploads/${fileData[0].fileBank}`"
+                      :href="`${url}${fileData[0].fileBank}`"
                       download
-                      target
+                      target="_blank"
                       style="text-decoration: none"
                     >
                       <v-icon color="green">mdi-file-pdf-box</v-icon>
@@ -149,9 +149,9 @@
                     >
                       <v-spacer></v-spacer>
                       <a
-                        :href="`http://localhost:3000/uploads/${file}`"
+                        :href="`${url}${file}`"
                         download
-                        target
+                        target="_blank"
                         style="text-decoration: none"
                       >
                         <v-icon color="green">mdi-file-pdf-box</v-icon>
@@ -159,7 +159,7 @@
                     </li>
                   </v-col>
 
-                  <!-- FICA  -->
+                  <!-- FICA -->
                   <v-col
                     cols="6"
                     sm="6"
@@ -170,7 +170,7 @@
                       fileData[0].fileFica !== 'undefined'
                     "
                   >
-                    <span>FICA</span>
+                    <span>Proof of Address</span>
                   </v-col>
 
                   <ul>
@@ -190,9 +190,9 @@
                       >
                         <v-spacer></v-spacer>
                         <a
-                          :href="`http://localhost:3000/uploads/${file}`"
+                          :href="`${url}${file}`"
                           download
-                          target
+                          target="_blank"
                           style="text-decoration: none"
                         >
                           <v-icon color="green">mdi-file-pdf-box</v-icon>
@@ -240,9 +240,9 @@ export default {
     },
   },
   mounted() {
-    this.url = `${this.$store.state.url}/uploads/`;
+    this.url = `${process.env.VUE_APP_BASEURL}/uploads/`;
 
-    //THIS A THOUGHT -  THEN POPULATE NTO A LOOP (YOU MAY NEED A FEW ANCHOR TAGS)
+    //THIS A THOUGHT - THEN POPULATE NTO A LOOP (YOU MAY NEED A FEW ANCHOR TAGS)
     let ficaSplit = this.fileData[0].fileFica;
     try {
       this.arrFicaFiles = ficaSplit.split(","); // set local array
@@ -267,3 +267,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+li {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+span {
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+</style>

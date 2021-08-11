@@ -1,5 +1,5 @@
 <template>
-<!-- 
+  <!-- 
           TYPE: View
           NAME: SalesInfo
        PURPOSE: a list of the sales with actions (update, delete, edit, view files)
@@ -78,7 +78,7 @@
                         </v-stepper-step>
                         <v-stepper-step
                           step="1"
-                          :complete="item.step1colour"
+                          complete
                           :id="item.id"
                           :color="item.step1colour"
                           @click="openSignOff($event)"
