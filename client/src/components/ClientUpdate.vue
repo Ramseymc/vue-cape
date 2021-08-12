@@ -931,43 +931,55 @@ components: {
         formData.append("documents", files[x]);
         //console.log("FileInfo::: ", files[x]);
       }
-      formData.append("firstName", this.editData[0].firstName);
-      formData.append("lastName", this.editData[0].lastName);
-      formData.append("iDNumber", this.editData[0].iDNumber);
-      formData.append("email", this.editData[0].email);
-      formData.append("bankName", this.editData[0].bankName);
-      formData.append("accountNumber", this.editData[0].accountNumber);
-      formData.append("accountType", this.editData[0].accountType);
       formData.append("block", this.editData[0].block);
       formData.append("unit", this.editData[0].unit);
       formData.append("mood", this.editData[0].mood);
       formData.append("flooring", this.editData[0].flooring);
       formData.append("floorplan", this.editData[0].floorplan);
+
+      formData.append("firstName", this.editData[0].firstName);
+      formData.append("lastName", this.editData[0].lastName);
+      formData.append("iDNumber", this.editData[0].iDNumber);
+      formData.append("marital", this.editData[0].marital);
+      formData.append("email", this.editData[0].email);
+      formData.append("bankName", this.editData[0].bankName);
+      formData.append("accountNumber", this.editData[0].accountNumber);
+      formData.append("accountType", this.editData[0].accountType);
       formData.append("mobile", this.editData[0].mobile.phoneNumber);
       formData.append("landline", this.editData[0].landline.phoneNumber);
       formData.append("postalAddress", this.editData[0].postaladdress);
       formData.append("residentialAddress", this.editData[0].residentialAddress);
-      formData.append("contract_price", this.editData[0].contractPrice);
-      // contractPrice: 0,      
-      // contractPriceStr: "",
-      
-      formData.append("base_price", this.editData[0].basePrice);
-      // basePrice: 0,    
-      // basePriceStr: "",
-     
-      // parkingNumber: 0,
-      formData.append("parking", this.editData[0].parking);
-      // parking: 0,     
-      // parkingPrice: 25000,    
-      // parkingPriceStr: "",
 
+      formData.append("contract_price", this.editData[0].contractPrice);
+      formData.append("base_price", this.editData[0].basePrice);   
+      formData.append("parking", this.editData[0].parking);
       formData.append("extras", this.editData[0].extras);
-      // extras: 0,
-      // extrasStr: "",
       formData.append("deductions", this.editData[0].deductions);
 
-      formData.append("contains", contains);    
-      formData.append("id", this.editData[0].id);
+      formData.append("salesAgent", this.editData[0].salesAgent);    
+      formData.append("salesAgentPhone", this.editData[0].salesAgentPhone);
+
+      formData.append("personTwoFirstName", this.editData[0].personTwoFirstName);
+      formData.append("personTwoLastName", this.editData[0].personTwoLastName);
+      formData.append("personTwoIDNumber", this.editData[0].personTwoIDNumber);
+      formData.append("personTwoEmail", this.editData[0].personTwoEmail);
+      formData.append("personTwoBankName", this.editData[0].personTwoBankName);
+      formData.append("personTwoAccountNumber", this.editData[0].personTwoAccountNumber);
+      formData.append("personTwoAccountType", this.editData[0].personTwoAccountType);
+      formData.append("personTwoMobile", this.editData[0].personTwoMobile);
+      formData.append("personTwoLandline", this.editData[0].personTwoLandline);
+      formData.append("personTwoPostalAddress", this.editData[0].personTwoPostalAddress);
+      formData.append("personTwoResidentialAddress", this.editData[0].personTwoResidentialAddress);
+      formData.append("personTwoMarital", this.editData[0].personTwoMarital);
+
+      // this person and buyers must be tested 
+      formData.append("salePerson", this.editData[0].person);
+      formData.append("saleBuyers", this.editData[0].buyers);
+
+      formData.append("contains", contains);
+      // `salesAgent`, `salesAgentPhone`,
+      // `saleType`, ?? test field
+      //`personTwoFirstName`, `personTwoLastName`, `personTwoIDNumber`, `personTwoEmail`, `personTwoBankName`, `personTwoAccountNumber`, `personTwoAccountType`, `personTwoFileID`, `personTwoFileBank`, `personTwoFilePaySlip`, `personTwoFileFica`, `personTwoMobile`, `personTwoLandline`, `personTwoPostalAddress`, `personTwoResidentialAddress`, `marital`, `personTwoMarital`, `salePerson`, `saleBuyers` FROM `salesinfo`
 
       await axios({
         method: "post",

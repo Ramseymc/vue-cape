@@ -94,10 +94,6 @@ router.post("/getUnitPlanTypes", (req, res) => {
 })
 
 
-
-
-
-
 router.post("/getAvailableUnits", (req,res) =>{
   console.log(req.body) // this is the only changed method the rest are new
     let mysql = `select u.id, s.unit, u.unitName from salesData s, units u where u.id = s.unit and u.subsection = ${req.body.subsection} and s.sold = false and s.development = ${req.body.id}`
@@ -120,7 +116,6 @@ router.post("/getAvailableUnits", (req,res) =>{
   });
 
 })
-
 
 // get avail units for selected development and block
 router.post("/getUnitsForOptions", (req, res) => {
@@ -181,7 +176,10 @@ router.post("/getClientInfoForSalesInfo", (req, res) => {
 
 // delete salesinfo record matching 'id'
 router.post("/deleteSalesRecord", (req, res) => {
-  let mysql = `delete from salesinfo where id = ${req.body.id}; update salesdata inner join units on units.id = salesdata.unit set sold = 0, extras = 0, deductions = 0, parking = 0, contract)price = base_price WHERE units.unitName = '${req.body.unit}' ;`
+  let mysql = `UPDATE salesdata inner join units on units.id = salesdata.unit inner join salesinfo on salesinfo.unit = units.unitName 
+  SET sold = 0, extras = 0, deductions = 0, parking = 0, contract_price = base_price 
+  WHERE units.unitName = '${req.body.unit}';
+  DELETE FROM salesinfo where id = ${req.body.id};`
   pool.getConnection(function (err, connection) {
     if (err) {
       connection.release();
@@ -367,6 +365,7 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
        firstName='${req.body.firstName}',
        lastName='${req.body.lastName}',
        iDNumber='${req.body.iDNumber}',
+       marital='${req.body.marital}',
        email='${req.body.email}',
        bankName='${req.body.bankName}',
        accountNumber='${req.body.accountNumber}',
@@ -374,7 +373,31 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
        block='${req.body.block}',
        unit='${req.body.unit}',
        mood='${req.body.mood}',
-       flooring='${req.body.flooring}', `
+       flooring='${req.body.flooring}', 
+       floorplan='${req.body.floorplan}',
+       mobile='${req.body.mobile}',
+       landline='${req.body.landline}',
+       postalAddress='${req.body.postalAddress}',
+       residentialAddress='${req.body.residentialAddress}',  
+       salesAgent='${req.body.salesAgent}',
+       salesAgentPhone='${req.body.salesAgentPhone}',
+
+       personTwoFirstName='${req.body.personTwoFirstName}',
+       personTwoLastName='${req.body.personTwoLastName}',
+       personTwoIDNumber='${req.body.personTwoIDNumber}',
+       personTwoMarital='${req.body.personTwoMarital}',
+       personTwoEmail='${req.body.personTwoEmail}',
+       personTwoBankName='${req.body.personTwoBankName}',
+       personTwoAccountNumber='${req.body.personTwoAccountNumber}',
+       personTwoAccountType='${req.body.personTwoAccountType}',
+       personTwoMobile='${req.body.personTwoMobile}',
+       personTwoLandline='${req.body.personTwoLandline}',
+       personTwoPostalAddress='${req.body.personTwoPostalAddress}',
+       personTwoResidentialAddress='${req.body.personTwoResidentialAddress}',
+
+       salePerson='${req.body.salePerson}',
+       saleBuyers='${req.body.saleBuyers}',
+       `       
 
   // dynamicSQL file uploads 
   // OTP
@@ -502,7 +525,17 @@ router.post("/updateClient", upload.array("documents"), (req, res) => {
   }
   // dynamic inserts for files, done 
 
-  mysql = `${mysql} ${additionalSQL} WHERE id = ${req.body.id}`
+  
+  let mysql2 = `UPDATE salesdata sd JOIN units u ON u.id = sd.unit JOIN salesinfo si ON si.unit = u.unitName
+            SET 
+              contract_price = base_price,
+              parking = ${req.body.parking},
+              extras = ${req.body.extras},
+              deductions = ${req.body.deductions} 
+            WHERE u.unitName = '${req.body.unit}';`
+
+  mysql = `${mysql} ${additionalSQL} WHERE id = ${req.body.id}; ${mysql2}`
+
   console.log(chalk.red("FINALmySQL UPDATE Satement, in salesRoutes.js = ", mysql));
 
   pool.getConnection(function (err, connection) {
@@ -695,7 +728,7 @@ router.post("/createClient", upload.array("documents"), (req, res) => {
                 '${req.body.firstName}','${req.body.lastName}','${req.body.iDNumber}', '${req.body.marital}','${req.body.email}','${req.body.bankName}','${req.body.accountNumber}','${req.body.accountType}','${req.body.block}','${req.body.unit}','${req.body.mood}','${req.body.flooring}','${fileOTP}','${fileId}', '${fileBank}','${filePaySlip}','${fileFica}','${dateTime}','${req.body.floorplan}','${req.body.mobile}','${req.body.landline}','${req.body.postalAddress}','${req.body.residentialAddress}','${req.body.salesAgent}','${req.body.salesAgentPhone}', '${req.body.personTwoFirstName}' , '${req.body.personTwoLastName}' , '${req.body.personTwoIDNumber}' , '${req.body.personTwoEmail}' , '${req.body.personTwoBankName}', '${req.body.personTwoAccountNumber}', '${req.body.personTwoAccountType}', ${personTwoFileID}, ${personTwoFilePaySlip}, ${personTwoFileFica}, '${req.body.personTwoMobile}', '${req.body.personTwoLandline}', '${req.body.personTwoPostalAddress}', '${req.body.personTwoResidentialAddress}', '${req.body.salePerson}', '${req.body.saleBuyers}', '${req.body.saleType}';
 
            UPDATE salesdata sd 
-             INNER JOIN units u ON sd.unit = u.id 
+             INNER JOIN units u ON sd.unit = u.id JOIN salesinfo si on si.unit = u.unitName
            SET
             sd.base_price = ${parseFloat(req.body.base_price)},
             sd.contract_price = ${parseFloat(req.body.contract_price)}, 

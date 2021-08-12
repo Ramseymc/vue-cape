@@ -964,6 +964,12 @@ export default {
         formData.append("documents", files[x]);
       }
       console.log("formData = ", formData);
+      formData.append("block", this.blockValue);
+      formData.append("unit", this.unitValue);
+      formData.append("mood", this.mood);
+      formData.append("flooring", this.flooring);
+      formData.append("floorplan", this.floorplan);
+      
       // formData.append("documents", files)
       formData.append("firstName", this.firstName);
       formData.append("lastName", this.lastName);
@@ -972,16 +978,17 @@ export default {
       formData.append("email", this.email);
       formData.append("bankName", this.bankName);
       formData.append("accountNumber", this.accountNumber);
-      formData.append("accountType", this.accountType);
-      formData.append("block", this.blockValue);
-      formData.append("unit", this.unitValue);
-      formData.append("mood", this.mood);
-      formData.append("flooring", this.flooring);
-      formData.append("floorplan", this.floorplan);
+      formData.append("accountType", this.accountType);      
       formData.append("mobile", this.mobile.phoneNumber);
       formData.append("landline", this.landline.phoneNumber);
       formData.append("postalAddress", this.postaladdress);
       formData.append("residentialAddress", this.residentialAddress);
+
+      formData.append("contract_price", this.contractPrice);
+      formData.append("base_price", this.basePrice);
+      formData.append("parking", this.parking);
+      formData.append("extras", this.extras);
+      formData.append("deductions", this.deductions);
 
       // personTwo
       formData.append("personTwoFirstName", this.personTwoFirstName);
@@ -992,10 +999,6 @@ export default {
       formData.append("personTwoBankName", this.personTwoBankName);
       formData.append("personTwoAccountNumber", this.personTwoAccountNumber);
       formData.append("personTwoAccountType", this.personTwoAccountType);
-      // formData.append("personTwoFileID", this.personTwoFileID);
-      // formData.append("personTwoFileBank", this.personTwoFileBank);
-      // formData.append("personTwoFilePaySlip", this.personTwoFilePaySlip);
-      // formData.append("personTwoFileFica", this.personTwoFileFica);
       formData.append("personTwoMobile", this.personTwoMobile);
       formData.append("personTwoLandline", this.personTwoLandline);
       formData.append("personTwoPostalAddress", this.personTwoPostalAddress);
@@ -1005,45 +1008,24 @@ export default {
       formData.append("salePerson", this.person);
       formData.append("saleBuyers", this.buyers);
 
-      if (this.person === 'person') {
-         if ( this.buyers === '1') {
-           formData.append("saleType","NaturalSingle");
-         } 
-         if ( this.buyers === '2') {
-           formData.append("saleType","NaturalMultiple");
-         }
-      } else {
-        formData.append("saleType","Legal");
-      }
-
       formData.append("salesAgent", this.salesAgent);
       formData.append("salesAgentPhone", this.salesAgentPhone);
 
-      // append the saleType from (person)
-
       formData.append("contains", contains);
-       formData.append("contract_price", this.contractPrice);
-      // contractPrice: 0,      
-      // contractPriceStr: "",
+ 
+      // if (this.person === 'person') {
+      //    if ( this.buyers === '1') {
+      //      formData.append("saleType","NaturalSingle");
+      //    } 
+      //    if ( this.buyers === '2') {
+      //      formData.append("saleType","NaturalMultiple");
+      //    }
+      // } else {
+      //   formData.append("saleType","Legal");
+      // }
 
-      formData.append("base_price", this.basePrice);
-      // basePrice: 0,    
-      // basePriceStr: "",
-     
-      // parkingNumber: 0,
-      formData.append("parking", this.parking);
-      // parking: 0,     
-      // parkingPrice: 25000,    
-      // parkingPriceStr: "",
-
-      formData.append("extras", this.extras);
-      // extras: 0,
-      // extrasStr: "",
-
-      formData.append("deductions", this.deductions);
       console.log("files:", files);
       console.log("contains:", contains);
-
       await axios({
         method: "post",
         url: `${url}/createClient`,
